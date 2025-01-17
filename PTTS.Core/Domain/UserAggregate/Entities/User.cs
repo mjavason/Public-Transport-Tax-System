@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace PTTS.Core.Domain
+namespace PTTS.Core.Domain.UserAggregate.Entities
 {
     public sealed class User : IdentityUser
     {

@@ -1,7 +1,7 @@
 using PTTS.Core.Domain.UserAggregate.DTOs;
 using PTTS.Core.Shared;
 
-namespace PTTS.Core.Domain.UserAggregate;
+namespace PTTS.Core.Domain.UserAggregate.Interfaces;
 
 public interface IUserService
 {

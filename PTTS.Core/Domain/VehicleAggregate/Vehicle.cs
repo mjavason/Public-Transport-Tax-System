@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.VehicleAggregate.Enums;
 
 namespace PTTS.Core.Domain
@@ -6,7 +7,6 @@ namespace PTTS.Core.Domain
 
     public class PublicTransportVehicle
     {
-
         public Guid Id { get; private set; }
         public string? UserId { get; set; } = null!;
         public string VehicleId { get; private set; }

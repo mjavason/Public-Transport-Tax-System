@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace PTTS.Core.Domain.UserAggregate.Entities
+namespace PTTS.Core.Domain.UserAggregate
 {
     public sealed class User : IdentityUser
     {

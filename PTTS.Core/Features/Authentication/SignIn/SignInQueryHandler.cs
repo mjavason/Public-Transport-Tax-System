@@ -1,10 +1,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using ShopAllocationPortal.Core.Domain.UserAggregate;
-using ShopAllocationPortal.Core.Domain.UserAggregate.DTOs;
-using ShopAllocationPortal.Core.Shared;
-
-namespace ShopAllocationPortal.Core.Features.Authentication.SignIn;
+using PTTS.Core.Domain.UserAggregate.DTOs;
+using PTTS.Core.Domain.UserAggregate.Interfaces;
+using PTTS.Core.Shared;
+namespace PTTS.Core.Features.Authentication.SignIn;
 
 public class SignInQueryHandler : IRequestHandler<SignInQuery, Result<AuthResponse?>>
 {
@@ -16,10 +15,10 @@ public class SignInQueryHandler : IRequestHandler<SignInQuery, Result<AuthRespon
         _userService = userService;
         _logger = logger;
     }
-    
+
     public async Task<Result<AuthResponse?>> Handle(SignInQuery request, CancellationToken cancellationToken)
     {
-       var result = await _userService.AuthenticateUserAsync(request.Email, request.Password);
-       return result;
+        var result = await _userService.AuthenticateUserAsync(request.Email, request.Password);
+        return result;
     }
 }

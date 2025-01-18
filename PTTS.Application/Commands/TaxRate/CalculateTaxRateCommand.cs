@@ -1,24 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 using PTTS.Core.Domain.TaxRateAggregate.Interfaces;
-using PTTS.Core.Domain.VehicleAggregate.Enums;
 
 namespace PTTS.Application.Commands.TaxRate
 {
-    public class CalculateTaxRateCommand : IRequest<decimal>
+    public class CalculateTaxRateCommand : IRequest<Core.Domain.TaxRateAggregate.TaxRate?>
     {
-        public VehicleType VehicleType { get; set; }
-
-        public CalculateTaxRateCommand(VehicleType vehicleType)
-        {
-            VehicleType = vehicleType;
-        }
+        [Required]
+        public required string VehicleType { get; set; }
     }
 
-    public class CalculateTaxRateCommandHandler : IRequestHandler<CalculateTaxRateCommand, decimal>
+    public class CalculateTaxRateCommandHandler : IRequestHandler<CalculateTaxRateCommand, Core.Domain.TaxRateAggregate.TaxRate?>
     {
         private readonly ITaxRateRepository _taxRateRepository;
 
@@ -27,9 +19,9 @@ namespace PTTS.Application.Commands.TaxRate
             _taxRateRepository = taxRateRepository;
         }
 
-        public async Task<decimal> Handle(CalculateTaxRateCommand request, CancellationToken cancellationToken)
+        public async Task<Core.Domain.TaxRateAggregate.TaxRate?> Handle(CalculateTaxRateCommand request, CancellationToken cancellationToken)
         {
-            return await _taxRateRepository.GetTaxRateByTransportTypeAsync(request.VehicleType);
+            return await _taxRateRepository.GetTaxRateByTransportTypeAsync(request.VehicleType, cancellationToken);
         }
     }
 }

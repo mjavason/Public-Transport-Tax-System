@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using PTTS.Core;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Infrastructure;
 using Scalar.AspNetCore;
@@ -17,6 +18,7 @@ builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationSche
 
 // Add Infrastructure services
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 

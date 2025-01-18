@@ -15,8 +15,8 @@ namespace PTTS.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{vehicleType}")]
-        public async Task<IActionResult> GetTaxRate([FromBody] CalculateTaxRateCommand query)
+        [HttpGet(Name = "GetTaxRate")]
+        public async Task<IActionResult> GetTaxRate([FromQuery] CalculateTaxRateCommand query)
         {
             var rate = await _mediator.Send(query);
             return Ok(rate);

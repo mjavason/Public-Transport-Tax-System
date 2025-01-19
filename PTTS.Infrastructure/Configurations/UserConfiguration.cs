@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PTTS.Core.Domain.UserAggregate;
 
-namespace TodoAppWithAuth.Database
+namespace PTTS.Infrastructure.Configurations
 {
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {

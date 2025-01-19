@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PTTS.Core.Domain.TaxRateAggregate;
 using PTTS.Core.Domain.UserAggregate;
-using TodoAppWithAuth.Database;
 
 namespace PTTS.Infrastructure.DatabaseContext
 {
@@ -15,15 +10,17 @@ namespace PTTS.Infrastructure.DatabaseContext
         public DbSet<TaxRate> TaxRates { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
-
             // Apply entity-specific configurations
-            builder.ApplyConfiguration(new UserConfiguration());
+            // builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
             // Set default schema for Identity
             builder.HasDefaultSchema("identity");
+
+            base.OnModelCreating(builder);
         }
     }
 }

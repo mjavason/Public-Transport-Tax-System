@@ -15,20 +15,22 @@ namespace PTTS.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Register Repositories
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITaxRateRepository, TaxRateRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             // Register DbContext with connection string from configuration
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("Database")));
+            services.AddDbContext<ApplicationDbContext>(dbContextOptions =>
+                dbContextOptions.UseNpgsql(configuration.GetConnectionString("Database"), options =>
+                {
+                    options.EnableRetryOnFailure();
+                }));
 
             // Register Identity
             services.AddIdentityCore<User>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddApiEndpoints();
-
-            // Register Repositories
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITaxRateRepository, TaxRateRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            // Add other repositories here as needed
 
             return services;
         }

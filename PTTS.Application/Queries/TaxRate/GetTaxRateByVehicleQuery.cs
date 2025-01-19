@@ -27,6 +27,6 @@ namespace PTTS.Application.Queries.TaxRate
             return result == null ?
             Result.NotFound<Core.Domain.TaxRateAggregate.TaxRate>(["No tax rate matching vehicle type found"]) :
             Result.Success(result);
-        }
+        }   
     }
 }

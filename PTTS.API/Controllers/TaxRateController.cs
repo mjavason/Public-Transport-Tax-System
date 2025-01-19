@@ -17,6 +17,7 @@ namespace PTTS.API.Controllers
         public async Task<IActionResult> GetTaxRate([FromQuery] CalculateTaxRateQuery query)
         {
             var rate = await _mediator.Send(query);
+            // throw new Exception("Just an exception");
             return GetActionResult(rate, "Rate retrieved successfully");
         }
     }

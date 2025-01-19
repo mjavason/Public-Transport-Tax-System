@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using PTTS.API.Middlewares;
 using PTTS.Application;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Infrastructure;
@@ -7,7 +8,7 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => { });
 
 // Add Swagger
 builder.Services.AddOpenApi();
@@ -21,6 +22,7 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

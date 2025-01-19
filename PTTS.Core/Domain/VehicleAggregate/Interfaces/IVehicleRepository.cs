@@ -1,3 +1,5 @@
+using PTTS.Core.Domain.VehicleAggregate;
+
 namespace PTTS.Core.Domain.Interfaces
 {
     public interface IPublicTransportVehicleRepository
@@ -31,7 +33,7 @@ namespace PTTS.Core.Domain.Interfaces
         /// <param name="vehicle">The vehicle with updated values.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The updated vehicle.</returns>
-        Task<PublicTransportVehicle> UpdateVehicleAsync(PublicTransportVehicle vehicle, CancellationToken cancellationToken);
+        PublicTransportVehicle UpdateVehicle(PublicTransportVehicle vehicle, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a PublicTransportVehicle by its unique identifier.

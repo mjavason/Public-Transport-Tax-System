@@ -1,14 +1,12 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using PTTS.Core.Domain.UserAggregate;
-using PTTS.Core.Domain.VehicleAggregate;
 
-namespace PTTS.Core.Domain
+namespace PTTS.Core.Domain.VehicleAggregate
 {
-
     public class PublicTransportVehicle
     {
         public Guid Id { get; private set; }
-        public string? UserId { get; set; } = null!;
+        public string? UserId { get; private set; } = null!;
         public string VehicleId { get; private set; }
         public string VehicleType { get; private set; }
 
@@ -28,6 +26,12 @@ namespace PTTS.Core.Domain
         public static PublicTransportVehicle Create(string vehicleType, string userId)
         {
             return new PublicTransportVehicle(vehicleType, userId);
+        }
+
+        public static void UpdateVehicleType(PublicTransportVehicle existingVehicle, string vehicleType)
+        {
+            existingVehicle.VehicleType = vehicleType;
+            existingVehicle.VehicleId = existingVehicle.GenerateVehicleId(vehicleType);
         }
 
         private string GenerateVehicleId(string vehicleType)

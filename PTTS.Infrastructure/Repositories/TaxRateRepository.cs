@@ -24,10 +24,9 @@ namespace PTTS.Infrastructure.Repositories
                 .FirstOrDefaultAsync(t => t.VehicleType == vehicleType);
         }
 
-        public async Task<TaxRate> CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken)
+        public async Task CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken)
         {
             await _context.TaxRates.AddAsync(taxRate, cancellationToken);
-            return taxRate;
         }
 
         public Task<TaxRate> UpdateTaxRateAsync(TaxRate taxRate, CancellationToken cancellationToken)

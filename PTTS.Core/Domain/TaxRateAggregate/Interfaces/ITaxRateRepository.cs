@@ -16,7 +16,7 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         /// <param name="taxRate">The TaxRate to create.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The created TaxRate.</returns>
-        Task<TaxRate> CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken);
+        Task CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates an existing TaxRate.

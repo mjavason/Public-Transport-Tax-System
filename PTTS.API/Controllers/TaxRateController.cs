@@ -1,28 +1,23 @@
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using PTTS.Application.Commands.TaxRate;
+using PTTS.API.Filters.Model;
+using PTTS.Application.Queries.TaxRate;
 
 namespace PTTS.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TaxRateController : ControllerBase
+    public class TaxRateController : ApiBaseController
     {
-        private readonly IMediator _mediator;
+        public TaxRateController(IMediator mediator) : base(mediator) { }
 
-        public TaxRateController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
-        [HttpGet(Name = "GetTaxRate")]
-        public async Task<IActionResult> GetTaxRate([FromQuery] CalculateTaxRateCommand query)
+        [HttpGet()]
+        [ProducesResponseType(typeof(SuccessResponse<Core.Domain.TaxRateAggregate.TaxRate>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetTaxRate([FromQuery] CalculateTaxRateQuery query)
         {
             var rate = await _mediator.Send(query);
-            if(rate == null) return NotFound();
-            
-            return Ok(rate);
+            return GetActionResult(rate, "Rate retrieved successfully");
         }
     }
 }

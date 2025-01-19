@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using PTTS.Core.Domain.UserAggregate;
+using PTTS.Core.Domain.VehicleAggregate;
 
 namespace PTTS.Core.Domain
 {
@@ -14,11 +15,19 @@ namespace PTTS.Core.Domain
         [ForeignKey(nameof(UserId))]
         public User? User { get; set; } = null!;
 
-        public PublicTransportVehicle(string vehicleType, string userId)
+        private PublicTransportVehicle(string vehicleType, string userId)
         {
+            if (!VehicleConstants.ValidVehicleTypes.Contains(vehicleType))
+                throw new ArgumentException($"Invalid vehicle type: {vehicleType}.", nameof(vehicleType));
+
             VehicleId = GenerateVehicleId(vehicleType);
             VehicleType = vehicleType;
             UserId = userId;
+        }
+
+        public static PublicTransportVehicle Create(string vehicleType, string userId)
+        {
+            return new PublicTransportVehicle(vehicleType, userId);
         }
 
         private string GenerateVehicleId(string vehicleType)

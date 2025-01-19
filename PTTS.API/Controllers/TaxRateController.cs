@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.API.Filters.Model;
 using PTTS.Application.Queries.TaxRate;
@@ -14,6 +15,7 @@ namespace PTTS.API.Controllers
         [HttpGet()]
         [ProducesResponseType(typeof(SuccessResponse<Core.Domain.TaxRateAggregate.TaxRate>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [Authorize]
         public async Task<IActionResult> GetTaxRate([FromQuery] CalculateTaxRateQuery query)
         {
             var rate = await _mediator.Send(query);

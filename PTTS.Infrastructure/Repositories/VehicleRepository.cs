@@ -2,11 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using PTTS.Core.Domain;
 using PTTS.Core.Domain.Interfaces;
 using PTTS.Infrastructure.DatabaseContext;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PTTS.Infrastructure.Repositories
 {
@@ -19,7 +14,7 @@ namespace PTTS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Core.Domain.VehicleAggregate.PublicTransportVehicle?> GetVehicleByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Core.Domain.VehicleAggregate.PublicTransportVehicle?> GetVehicleByIdAsync(int id, CancellationToken cancellationToken)
         {
             return await _context.PublicTransportVehicles
                 .FirstOrDefaultAsync(vehicle => vehicle.Id == id, cancellationToken);
@@ -42,7 +37,7 @@ namespace PTTS.Infrastructure.Repositories
             return vehicle;
         }
 
-        public async Task DeleteVehicleAsync(Guid id, CancellationToken cancellationToken)
+        public async Task DeleteVehicleAsync(int id, CancellationToken cancellationToken)
         {
             var vehicle = await _context.PublicTransportVehicles
                 .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
@@ -53,7 +48,7 @@ namespace PTTS.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> VehicleExistsAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<bool> VehicleExistsAsync(int id, CancellationToken cancellationToken)
         {
             return await _context.PublicTransportVehicles
                 .AnyAsync(vehicle => vehicle.Id == id, cancellationToken);

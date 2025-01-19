@@ -189,6 +189,28 @@ namespace PTTS.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PublicTransportVehicles",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    VehicleId = table.Column<string>(type: "text", nullable: false),
+                    VehicleType = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PublicTransportVehicles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PublicTransportVehicles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 schema: "identity",
@@ -232,6 +254,12 @@ namespace PTTS.Infrastructure.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PublicTransportVehicles_UserId",
+                schema: "identity",
+                table: "PublicTransportVehicles",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -255,6 +283,10 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "PublicTransportVehicles",
                 schema: "identity");
 
             migrationBuilder.DropTable(

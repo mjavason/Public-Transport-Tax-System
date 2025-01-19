@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using PTTS.API.Middlewares;
 using PTTS.Application;
 using PTTS.Core.Domain.UserAggregate;
@@ -8,14 +7,10 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers(options => { });
+builder.Services.AddControllers();
 
 // Add Swagger
 builder.Services.AddOpenApi();
-
-// Add Authorization and Authentication
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
 
 // Add Infrastructure services
 builder.Services.AddInfrastructureServices(builder.Configuration);

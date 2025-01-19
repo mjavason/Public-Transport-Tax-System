@@ -8,7 +8,7 @@ namespace PTTS.Application.Queries.PublicTransportVehicle
 {
     public class GetVehicleByIdQuery : IRequest<Result<Core.Domain.VehicleAggregate.PublicTransportVehicle>>
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
     }
 
     public class GetVehicleByIdQueryHandler : IRequestHandler<GetVehicleByIdQuery, Result<Core.Domain.VehicleAggregate.PublicTransportVehicle>>

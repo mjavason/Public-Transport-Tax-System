@@ -8,7 +8,7 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
 {
     public class UpdateVehicleCommand : IRequest<Result>
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string? VehicleType { get; set; }
         // public string UserId { get; set; }
     }

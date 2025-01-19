@@ -7,7 +7,7 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
 {
     public class DeleteVehicleCommand : IRequest<Result>
     {
-        public required Guid Id { get; set; }
+        public required int Id { get; set; }
     }
 
     public class DeleteVehicleCommandHandler : IRequestHandler<DeleteVehicleCommand, Result>

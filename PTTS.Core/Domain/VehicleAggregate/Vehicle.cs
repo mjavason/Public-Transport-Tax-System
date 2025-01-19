@@ -5,7 +5,7 @@ namespace PTTS.Core.Domain.VehicleAggregate
 {
     public class PublicTransportVehicle
     {
-        public Guid Id { get; private set; }
+        public int Id { get; private set; }
         public string? UserId { get; private set; } = null!;
         public string VehicleId { get; private set; }
         public string VehicleType { get; private set; }

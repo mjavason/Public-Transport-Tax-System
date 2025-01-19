@@ -10,7 +10,7 @@ namespace PTTS.Core.Domain.Interfaces
         /// <param name="id">The identifier of the vehicle.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The matching vehicle or null if not found.</returns>
-        Task<PublicTransportVehicle?> GetVehicleByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<PublicTransportVehicle?> GetVehicleByIdAsync(int id, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets all PublicTransportVehicles.
@@ -41,7 +41,7 @@ namespace PTTS.Core.Domain.Interfaces
         /// <param name="id">The identifier of the vehicle to delete.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        Task DeleteVehicleAsync(Guid id, CancellationToken cancellationToken);
+        Task DeleteVehicleAsync(int id, CancellationToken cancellationToken);
 
         /// <summary>
         /// Checks if a PublicTransportVehicle exists by its unique identifier.
@@ -49,7 +49,7 @@ namespace PTTS.Core.Domain.Interfaces
         /// <param name="id">The identifier of the vehicle.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>True if the vehicle exists; otherwise, false.</returns>
-        Task<bool> VehicleExistsAsync(Guid id, CancellationToken cancellationToken);
+        Task<bool> VehicleExistsAsync(int id, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets vehicles by user identifier.

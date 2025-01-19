@@ -15,6 +15,7 @@ namespace PTTS.Infrastructure.DatabaseContext
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
             // Apply entity-specific configurations
             // builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
@@ -22,7 +23,6 @@ namespace PTTS.Infrastructure.DatabaseContext
             // Set default schema for Identity
             builder.HasDefaultSchema("identity");
 
-            base.OnModelCreating(builder);
         }
     }
 }

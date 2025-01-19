@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PTTS.API.Filters.Model;
 using PTTS.Application.Queries.PublicTransportVehicle;
 using PTTS.Application.Commands.PublicTransportVehicle;
+using PTTS.Core.Domain.VehicleAggregate.DTOs;
 
 namespace PTTS.API.Controllers
 {
@@ -42,8 +43,10 @@ namespace PTTS.API.Controllers
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<IActionResult> CreateVehicle([FromBody] CreateVehicleCommand command)
+        public async Task<IActionResult> CreateVehicle([FromBody] CreateVehicleDto createVehicleDto)
         {
+            string userId = GetUserId();
+            var command = new CreateVehicleCommand { UserId = userId, VehicleType = createVehicleDto.vehicleType };
             var result = await _mediator.Send(command);
             return GetActionResult(result, "Vehicle created successfully");
         }

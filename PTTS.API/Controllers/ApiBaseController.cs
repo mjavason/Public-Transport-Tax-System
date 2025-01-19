@@ -18,6 +18,12 @@ public abstract class ApiBaseController : ControllerBase
         _mediator = mediator;
     }
 
+    protected string GetUserId()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new UnauthorizedAccessException("User ID not found in claims.");
+    }
+
     protected static IActionResult GetActionResult<T>(Result<T> result, string successMessage = "")
     {
         return result.IsSuccess ? new OkObjectResult(result.GetSuccessResult(successMessage)) : ErrorActionResult(result.ErrorType, result.Errors);

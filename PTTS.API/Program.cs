@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using PTTS.Core;
+using PTTS.Application;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Infrastructure;
 using Scalar.AspNetCore;

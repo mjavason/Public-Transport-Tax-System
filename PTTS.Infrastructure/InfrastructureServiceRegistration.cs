@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PTTS.Core.Domain.Common;
 using PTTS.Core.Domain.TaxRateAggregate.Interfaces;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.UserAggregate.Interfaces;
@@ -26,6 +27,7 @@ namespace PTTS.Infrastructure
             // Register Repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITaxRateRepository, TaxRateRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             // Add other repositories here as needed
 
             return services;

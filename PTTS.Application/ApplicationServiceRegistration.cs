@@ -2,7 +2,7 @@
 using MediatR.NotificationPublishers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PTTS.Core;
+namespace PTTS.Application;
 
 public static class ApplicationServiceRegistration
 {

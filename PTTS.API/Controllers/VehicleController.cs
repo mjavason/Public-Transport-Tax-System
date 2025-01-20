@@ -14,6 +14,30 @@ namespace PTTS.API.Controllers
     {
         public PublicTransportVehicleController(IMediator mediator) : base(mediator) { }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [Authorize]
+        public async Task<IActionResult> GetAllVehicles()
+        {
+            var query = new GetAllVehiclesQuery();
+            var result = await _mediator.Send(query);
+            return GetActionResult(result, "Vehicles retrieved successfully");
+        }
+
+        [HttpGet("user")]
+        [EndpointSummary("Get users vehicles")]
+        [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [Authorize]
+        public async Task<IActionResult> GetVehiclesByUserId()
+        {
+            string userId = GetUserId();
+            var query = new GetVehiclesByUserIdQuery { UserId = userId };
+            var result = await _mediator.Send(query);
+            return GetActionResult(result, "Users vehicles retrieved successfully");
+        }
+
         // GET api/publictransportvehicle/{id}
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(SuccessResponse<Core.Domain.VehicleAggregate.PublicTransportVehicle>), StatusCodes.Status200OK)]
@@ -26,19 +50,6 @@ namespace PTTS.API.Controllers
             return GetActionResult(result, "Vehicle retrieved successfully");
         }
 
-        // GET api/publictransportvehicle
-        [HttpGet]
-        [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> GetAllVehicles()
-        {
-            var query = new GetAllVehiclesQuery();
-            var result = await _mediator.Send(query);
-            return GetActionResult(result, "Vehicles retrieved successfully");
-        }
-
-        // POST api/publictransportvehicle
         [HttpPost]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -48,7 +59,7 @@ namespace PTTS.API.Controllers
             string userId = GetUserId();
             var command = new CreateVehicleCommand { UserId = userId, VehicleType = createVehicleDto.vehicleType };
             var result = await _mediator.Send(command);
-            return GetActionResult(result, "Vehicle created successfully");
+            return result.IsSuccess ? NoContent() : GetActionResult(result);
         }
 
         // PUT api/publictransportvehicle
@@ -59,7 +70,7 @@ namespace PTTS.API.Controllers
         public async Task<IActionResult> UpdateVehicle([FromBody] UpdateVehicleCommand command)
         {
             var result = await _mediator.Send(command);
-            return GetActionResult(result, "Vehicle updated successfully");
+            return result.IsSuccess ? NoContent() : GetActionResult(result);
         }
 
         // DELETE api/publictransportvehicle/{id}
@@ -71,31 +82,7 @@ namespace PTTS.API.Controllers
         {
             var command = new DeleteVehicleCommand { Id = id };
             var result = await _mediator.Send(command);
-            return GetActionResult(result, "Vehicle deleted successfully");
-        }
-
-        // GET api/publictransportvehicle/exists/{id}
-        [HttpGet("exists/{id}")]
-        [ProducesResponseType(typeof(SuccessResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> VehicleExists([FromRoute] int id)
-        {
-            var query = new CheckVehicleExistsQuery { Id = id };
-            var result = await _mediator.Send(query);
-            return GetActionResult(result, "Vehicle existence checked successfully");
-        }
-
-        // GET api/publictransportvehicle/user/{userId}
-        [HttpGet("user/{userId}")]
-        [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> GetVehiclesByUserId([FromRoute] string userId)
-        {
-            var query = new GetVehiclesByUserIdQuery { UserId = userId };
-            var result = await _mediator.Send(query);
-            return GetActionResult(result, "Vehicles retrieved by user successfully");
+            return result.IsSuccess ? NoContent() : GetActionResult(result);
         }
     }
 }

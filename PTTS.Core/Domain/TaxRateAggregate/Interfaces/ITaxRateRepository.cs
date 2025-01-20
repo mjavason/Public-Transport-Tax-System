@@ -34,7 +34,7 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         /// <param name="taxRateId">The identifier of the TaxRate.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The matching TaxRate or null if not found.</returns>
-        Task<TaxRate?> GetTaxRateByIdAsync(Guid taxRateId, CancellationToken cancellationToken);
+        Task<TaxRate?> GetTaxRateByIdAsync(int taxRateId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates an existing TaxRate.
@@ -42,7 +42,7 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         /// <param name="taxRate">The TaxRate with updated values.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The updated TaxRate.</returns>
-        Task<TaxRate> UpdateTaxRateAsync(TaxRate taxRate, CancellationToken cancellationToken);
+        void UpdateTaxRate(TaxRate taxRate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a TaxRate by its identifier.
@@ -50,6 +50,6 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         /// <param name="taxRateId">The identifier of the TaxRate to delete.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        Task DeleteTaxRateAsync(Guid taxRateId, CancellationToken cancellationToken);
+        Task DeleteTaxRateAsync(int taxRateId, CancellationToken cancellationToken);
     }
 }

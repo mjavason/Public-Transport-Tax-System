@@ -4,11 +4,11 @@ namespace PTTS.Core.Domain.Constants
     {
         public static string[] VehicleTypes =
         {
-            "Car",
-            "Truck",
-            "Motorcycle",
-            "Bus",
-            "Van"
+            "car",
+            "truck",
+            "motorcycle",
+            "bus",
+            "van"
         };
 
         public static string[] States = {

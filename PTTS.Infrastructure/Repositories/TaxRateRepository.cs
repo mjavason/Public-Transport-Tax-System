@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PTTS.Core.Domain.TaxRateAggregate;
 using PTTS.Core.Domain.TaxRateAggregate.DTOs;
@@ -60,12 +56,12 @@ namespace PTTS.Infrastructure.Repositories
             await _context.TaxRates.AddAsync(taxRate, cancellationToken);
         }
 
-        public Task<TaxRate> UpdateTaxRateAsync(TaxRate taxRate, CancellationToken cancellationToken)
+        public void UpdateTaxRate(TaxRate taxRate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.TaxRates.Update(taxRate);
         }
 
-        public Task DeleteTaxRateAsync(Guid taxRateId, CancellationToken cancellationToken)
+        public Task DeleteTaxRateAsync(int taxRateId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -75,7 +71,7 @@ namespace PTTS.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<TaxRate?> GetTaxRateByIdAsync(Guid taxRateId, CancellationToken cancellationToken)
+        public Task<TaxRate?> GetTaxRateByIdAsync(int taxRateId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

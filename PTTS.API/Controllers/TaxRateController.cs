@@ -20,8 +20,8 @@ namespace PTTS.API.Controllers
         public async Task<IActionResult> FilterTaxRate([FromQuery] FilterTaxRateDto filter)
         {
             var query = new FilterTaxRateQuery { Filter = filter };
+            
             var rates = await _mediator.Send(query);
-            // throw new Exception("Just an exception");
             return GetActionResult(rates, "Rates retrieved successfully");
         }
     }

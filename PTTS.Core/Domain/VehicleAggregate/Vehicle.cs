@@ -86,15 +86,6 @@ namespace PTTS.Core.Domain.VehicleAggregate
         {
             if (updateVehicleDto.VehicleType != null && !AppConstants.VehicleTypes.Contains(updateVehicleDto.VehicleType))
                 throw new ArgumentException($"Invalid vehicle type: {updateVehicleDto.VehicleType}. Must be one of {string.Join(", ", AppConstants.VehicleTypes)}", nameof(updateVehicleDto.VehicleType));
-
-            if (string.IsNullOrWhiteSpace(updateVehicleDto.Make))
-                throw new ArgumentException("Make cannot be null or empty.", nameof(updateVehicleDto.Make));
-
-            if (string.IsNullOrWhiteSpace(updateVehicleDto.Model))
-                throw new ArgumentException("Model cannot be null or empty.", nameof(updateVehicleDto.Model));
-
-            if (string.IsNullOrWhiteSpace(updateVehicleDto.PlateNumber))
-                throw new ArgumentException("Plate number cannot be null or empty.", nameof(updateVehicleDto.PlateNumber));
         }
     }
 }

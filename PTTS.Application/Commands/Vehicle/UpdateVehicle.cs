@@ -8,7 +8,7 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
 {
     public class UpdateVehicleCommand : IRequest<Result>
     {
-        public required UpdateVehicleDto updateVehicleDto { get; set; }
+        public required UpdateVehicleDto UpdateVehicleDto { get; set; }
     }
 
     public class UpdateVehicleCommandHandler : IRequestHandler<UpdateVehicleCommand, Result>
@@ -26,11 +26,11 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
         {
             try
             {
-                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.updateVehicleDto.VehicleId, cancellationToken);
+                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.UpdateVehicleDto.VehicleId, cancellationToken);
                 if (vehicle == null)
                     return Result.NotFound(["Vehicle not found"]);
 
-                vehicle.Update(request.updateVehicleDto);
+                vehicle.Update(request.UpdateVehicleDto);
                 _vehicleRepository.UpdateVehicle(vehicle, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 

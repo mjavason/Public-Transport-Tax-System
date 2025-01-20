@@ -1,7 +1,6 @@
-
-// UpdateTaxRateCommand
 using MediatR;
 using PTTS.Core.Domain.Common;
+using PTTS.Core.Domain.TaxRateAggregate.DTOs;
 using PTTS.Core.Domain.TaxRateAggregate.Interfaces;
 using PTTS.Core.Shared;
 

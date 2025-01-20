@@ -1,3 +1,5 @@
+namespace PTTS.Core.Domain.TaxRateAggregate.DTOs;
+
 public class UpdateTaxRateDto
 {
     public string? LocalGovernment { get; set; }

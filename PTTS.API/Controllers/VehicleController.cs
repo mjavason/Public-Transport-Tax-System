@@ -15,6 +15,8 @@ namespace PTTS.API.Controllers
         public PublicTransportVehicleController(IMediator mediator) : base(mediator) { }
 
         [HttpGet]
+        [EndpointSummary("Get all vehicles")]
+        [EndpointDescription("Retrieves a list of all public transport vehicles.")]
         [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         [Authorize]
@@ -27,6 +29,7 @@ namespace PTTS.API.Controllers
 
         [HttpGet("user")]
         [EndpointSummary("Get users vehicles")]
+        [EndpointDescription("Retrieves a list of public transport vehicles associated with the authenticated user.")]
         [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         [Authorize]
@@ -39,6 +42,8 @@ namespace PTTS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [EndpointSummary("Get vehicle by ID")]
+        [EndpointDescription("Retrieves a public transport vehicle by its ID.")]
         [ProducesResponseType(typeof(SuccessResponse<Core.Domain.VehicleAggregate.PublicTransportVehicle>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         [Authorize]
@@ -50,7 +55,9 @@ namespace PTTS.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+        [EndpointSummary("Create a new vehicle")]
+        [EndpointDescription("Creates a new public transport vehicle.")]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [Authorize]
         public async Task<IActionResult> CreateVehicle([FromBody] CreateVehicleDto createVehicleDto)
@@ -61,18 +68,23 @@ namespace PTTS.API.Controllers
             return result.IsSuccess ? NoContent() : GetActionResult(result);
         }
 
-        [HttpPut]
-        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+        [HttpPatch]
+        [EndpointSummary("Update an existing vehicle")]
+        [EndpointDescription("Updates the details of an existing public transport vehicle.")]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [Authorize]
-        public async Task<IActionResult> UpdateVehicle([FromBody] UpdateVehicleCommand command)
+        public async Task<IActionResult> UpdateVehicle([FromBody] UpdateVehicleDto updateVehicleDto)
         {
+            var command = new UpdateVehicleCommand { UpdateVehicleDto = updateVehicleDto };
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : GetActionResult(result);
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+        [EndpointSummary("Delete a vehicle by ID")]
+        [EndpointDescription("Deletes a public transport vehicle by its ID.")]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         [Authorize]
         public async Task<IActionResult> DeleteVehicle([FromRoute] int id)

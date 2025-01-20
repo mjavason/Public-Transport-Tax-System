@@ -1,4 +1,5 @@
 using PTTS.Core.Domain.Constants;
+using PTTS.Core.Domain.TaxRateAggregate.DTOs;
 
 namespace PTTS.Core.Domain.TaxRateAggregate
 {

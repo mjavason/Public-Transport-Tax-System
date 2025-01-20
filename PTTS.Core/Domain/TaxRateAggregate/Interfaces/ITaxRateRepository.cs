@@ -11,7 +11,7 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         /// <param name="taxRate">The TaxRate to create.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The created TaxRate.</returns>
-        Task CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken);
+        void CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Filter TaxRates based on the provided params.
@@ -50,6 +50,6 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         /// <param name="taxRateId">The identifier of the TaxRate to delete.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        Task DeleteTaxRateAsync(int taxRateId, CancellationToken cancellationToken);
+        void DeleteTaxRate(TaxRate taxRate, CancellationToken cancellationToken);
     }
 }

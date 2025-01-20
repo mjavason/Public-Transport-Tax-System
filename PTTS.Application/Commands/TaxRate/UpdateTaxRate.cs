@@ -25,15 +25,22 @@ namespace PTTS.Application.Commands.TaxRate
 
         public async Task<Result> Handle(UpdateTaxRateCommand request, CancellationToken cancellationToken)
         {
-            var taxRateToUpdate = await _taxRateRepository.GetTaxRateByIdAsync(request.Update.TaxRateId, cancellationToken);
-            if (taxRateToUpdate == null)
-                return Result.NotFound(["Tax rate not found."]);
+            try
+            {
+                var taxRateToUpdate = await _taxRateRepository.GetTaxRateByIdAsync(request.Update.TaxRateId, cancellationToken);
+                if (taxRateToUpdate == null)
+                    return Result.NotFound(["Tax rate not found."]);
 
-            taxRateToUpdate.Update(request.Update);
-            _taxRateRepository.UpdateTaxRate(taxRateToUpdate, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                taxRateToUpdate.Update(request.Update);
+                _taxRateRepository.UpdateTaxRate(taxRateToUpdate, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                return Result.BadRequest(new List<string> { ex.Message });
+            }
         }
     }
 }

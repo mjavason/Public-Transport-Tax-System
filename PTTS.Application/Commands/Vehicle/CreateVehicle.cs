@@ -27,15 +27,22 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
 
         public async Task<Result> Handle(CreateVehicleCommand request, CancellationToken cancellationToken)
         {
-            if (!AppConstants.VehicleTypes.Contains(request.VehicleType))
-                return Result.BadRequest([$"Invalid vehicle type: {request.VehicleType}. Must be one of {string.Join(", ", AppConstants.VehicleTypes)}", nameof(request.VehicleType)]);
+            try
+            {
+                if (!AppConstants.VehicleTypes.Contains(request.VehicleType))
+                    return Result.BadRequest([$"Invalid vehicle type: {request.VehicleType}. Must be one of {string.Join(", ", AppConstants.VehicleTypes)}", nameof(request.VehicleType)]);
 
-            var newVehicle = Core.Domain.VehicleAggregate.PublicTransportVehicle.Create(request.VehicleType, request.UserId);
+                var newVehicle = Core.Domain.VehicleAggregate.PublicTransportVehicle.Create(request.VehicleType, request.UserId);
 
-            await _vehicleRepository.CreateVehicleAsync(newVehicle, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _vehicleRepository.CreateVehicleAsync(newVehicle, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                return Result.BadRequest(new List<string> { ex.Message });
+            }
         }
     }
 }

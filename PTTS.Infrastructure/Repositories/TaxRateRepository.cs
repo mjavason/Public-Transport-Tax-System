@@ -50,8 +50,7 @@ namespace PTTS.Infrastructure.Repositories
             return result.AsReadOnly();
         }
 
-
-        public async Task CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken)
+        public async void CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken)
         {
             await _context.TaxRates.AddAsync(taxRate, cancellationToken);
         }
@@ -61,24 +60,21 @@ namespace PTTS.Infrastructure.Repositories
             _context.TaxRates.Update(taxRate);
         }
 
-        public Task DeleteTaxRateAsync(int taxRateId, CancellationToken cancellationToken)
+        public void DeleteTaxRate(TaxRate taxRate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _context.TaxRates.Remove(taxRate);
         }
 
-        public Task<IReadOnlyList<TaxRate>> GetAllTaxRatesAsync(CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<TaxRate>> GetAllTaxRatesAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var result = await _context.TaxRates.ToListAsync(cancellationToken);
+            return result.AsReadOnly();
         }
 
-        public Task<TaxRate?> GetTaxRateByIdAsync(int taxRateId, CancellationToken cancellationToken)
+        public async Task<TaxRate?> GetTaxRateByIdAsync(int taxRateId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> TaxRateExistsAsync(string vehicleType, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+            return await _context.TaxRates
+            .FirstOrDefaultAsync(tr => tr.Id == taxRateId, cancellationToken);
         }
     }
 }

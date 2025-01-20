@@ -23,15 +23,22 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
 
         public async Task<Result> Handle(DeleteVehicleCommand request, CancellationToken cancellationToken)
         {
-            var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.Id, cancellationToken);
+            try
+            {
+                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.Id, cancellationToken);
 
-            if (vehicle == null)
-                return Result.NotFound<Core.Domain.VehicleAggregate.PublicTransportVehicle>(["Vehicle not found"]);
+                if (vehicle == null)
+                    return Result.NotFound<Core.Domain.VehicleAggregate.PublicTransportVehicle>(["Vehicle not found"]);
 
-            await _vehicleRepository.DeleteVehicleAsync(request.Id, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _vehicleRepository.DeleteVehicleAsync(request.Id, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                return Result.BadRequest(new List<string> { ex.Message });
+            }
         }
     }
 }

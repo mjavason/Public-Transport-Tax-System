@@ -21,7 +21,6 @@ namespace PTTS.Application.Queries.TaxRate
         public async Task<Result<Core.Domain.TaxRateAggregate.TaxRate>> Handle(GetTaxRateByIdQuery request, CancellationToken cancellationToken)
         {
             var result = await _taxRateRepository.GetTaxRateByIdAsync(request.TaxRateId, cancellationToken);
-
             return result == null ?
                 Result.NotFound<Core.Domain.TaxRateAggregate.TaxRate>(["Tax rate not found."])
                 : Result.Success(result);

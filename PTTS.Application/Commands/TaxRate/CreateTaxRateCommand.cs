@@ -9,6 +9,8 @@ namespace PTTS.Application.Commands.TaxRate
     {
         public required string VehicleType { get; set; }
         public required decimal Rate { get; set; }
+
+        public required string LocalGovernment { get; set; }
     }
 
     public class CreateTaxRateCommandHandler : IRequestHandler<CreateTaxRateCommand, Result>
@@ -24,7 +26,7 @@ namespace PTTS.Application.Commands.TaxRate
 
         public async Task<Result> Handle(CreateTaxRateCommand request, CancellationToken cancellationToken)
         {
-            var newTaxRate = Core.Domain.TaxRateAggregate.TaxRate.Create(request.VehicleType, request.Rate);
+            var newTaxRate = Core.Domain.TaxRateAggregate.TaxRate.Create(request.LocalGovernment, request.VehicleType, request.Rate);
 
             await _taxRateRepository.CreateTaxRate(newTaxRate, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using PTTS.Core.Domain.Constants;
 using PTTS.Core.Domain.UserAggregate;
 
 namespace PTTS.Core.Domain.VehicleAggregate
@@ -15,7 +16,7 @@ namespace PTTS.Core.Domain.VehicleAggregate
 
         private PublicTransportVehicle(string vehicleType, string userId)
         {
-            if (!VehicleConstants.ValidVehicleTypes.Contains(vehicleType))
+            if (!AppConstants.VehicleTypes.Contains(vehicleType))
                 throw new ArgumentException($"Invalid vehicle type: {vehicleType}.", nameof(vehicleType));
 
             VehicleId = GenerateVehicleId(vehicleType);

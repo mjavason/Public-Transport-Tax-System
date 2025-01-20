@@ -19,7 +19,7 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         /// <param name="filter">The filter dto to be applied.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The matching TaxRate or null if not found.</returns>
-        Task<IReadOnlyList<TaxRate>> FilterTaxRateByTransportTypeAsync(FilterTaxRateDto filter, CancellationToken cancellationToken);
+        Task<IReadOnlyList<TaxRate>> FilterTaxRateAsync(FilterTaxRateDto filter, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets all TaxRates.

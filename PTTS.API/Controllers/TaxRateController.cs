@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.API.Filters.Model;
 using PTTS.Application.Queries.TaxRate;
+using PTTS.Core.Domain.TaxRateAggregate.DTOs;
 
 namespace PTTS.API.Controllers
 {
@@ -16,11 +17,12 @@ namespace PTTS.API.Controllers
         [ProducesResponseType(typeof(SuccessResponse<Core.Domain.TaxRateAggregate.TaxRate>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
         [Authorize]
-        public async Task<IActionResult> GetTaxRate([FromQuery] CalculateTaxRateQuery query)
+        public async Task<IActionResult> FilterTaxRate([FromQuery] FilterTaxRateDto filter)
         {
-            var rate = await _mediator.Send(query);
+            var query = new FilterTaxRateQuery { Filter = filter };
+            var rates = await _mediator.Send(query);
             // throw new Exception("Just an exception");
-            return GetActionResult(rate, "Rate retrieved successfully");
+            return GetActionResult(rates, "Rates retrieved successfully");
         }
     }
 }

@@ -1,0 +1,5 @@
+dotnet ef migrations add MigrationName --project PTTS.Infrastructure --startup-project PTTS.API
+dotnet ef database update --project ptts.infrastructure --startup-project ptts.api
+
+
+//You can update the MigrationName field as many times as you wish to create new migrations.

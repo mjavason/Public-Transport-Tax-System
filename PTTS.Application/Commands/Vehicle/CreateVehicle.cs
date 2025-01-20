@@ -1,6 +1,7 @@
 using MediatR;
 using PTTS.Core.Domain;
 using PTTS.Core.Domain.Common;
+using PTTS.Core.Domain.Constants;
 using PTTS.Core.Domain.Interfaces;
 using PTTS.Core.Domain.VehicleAggregate;
 using PTTS.Core.Shared;
@@ -26,8 +27,8 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
 
         public async Task<Result> Handle(CreateVehicleCommand request, CancellationToken cancellationToken)
         {
-            if (!VehicleConstants.ValidVehicleTypes.Contains(request.VehicleType))
-                return Result.BadRequest([$"Invalid vehicle type: {request.VehicleType}. Must be one of {string.Join(", ", VehicleConstants.ValidVehicleTypes)}", nameof(request.VehicleType)]);
+            if (!AppConstants.VehicleTypes.Contains(request.VehicleType))
+                return Result.BadRequest([$"Invalid vehicle type: {request.VehicleType}. Must be one of {string.Join(", ", AppConstants.VehicleTypes)}", nameof(request.VehicleType)]);
 
             var newVehicle = Core.Domain.VehicleAggregate.PublicTransportVehicle.Create(request.VehicleType, request.UserId);
 

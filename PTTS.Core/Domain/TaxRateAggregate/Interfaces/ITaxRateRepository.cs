@@ -1,15 +1,10 @@
+using Microsoft.AspNetCore.Mvc.Filters;
+using PTTS.Core.Domain.TaxRateAggregate.DTOs;
+
 namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
 {
     public interface ITaxRateRepository
     {
-        /// <summary>
-        /// Gets a TaxRate based on the provided transport type.
-        /// </summary>
-        /// <param name="vehicleType">The type of the vehicle.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The matching TaxRate or null if not found.</returns>
-        Task<TaxRate?> GetTaxRateByTransportTypeAsync(string vehicleType, CancellationToken cancellationToken);
-
         /// <summary>
         /// Creates a new TaxRate.
         /// </summary>
@@ -19,20 +14,12 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         Task CreateTaxRate(TaxRate taxRate, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Updates an existing TaxRate.
+        /// Filter TaxRates based on the provided params.
         /// </summary>
-        /// <param name="taxRate">The TaxRate with updated values.</param>
+        /// <param name="filter">The filter dto to be applied.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The updated TaxRate.</returns>
-        Task<TaxRate> UpdateTaxRateAsync(TaxRate taxRate, CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Deletes a TaxRate by its identifier.
-        /// </summary>
-        /// <param name="taxRateId">The identifier of the TaxRate to delete.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A Task representing the asynchronous operation.</returns>
-        Task DeleteTaxRateAsync(Guid taxRateId, CancellationToken cancellationToken);
+        /// <returns>The matching TaxRate or null if not found.</returns>
+        Task<IReadOnlyList<TaxRate>> FilterTaxRateByTransportTypeAsync(FilterTaxRateDto filter, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets all TaxRates.
@@ -50,11 +37,19 @@ namespace PTTS.Core.Domain.TaxRateAggregate.Interfaces
         Task<TaxRate?> GetTaxRateByIdAsync(Guid taxRateId, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Checks if a TaxRate exists for a specific vehicle type.
+        /// Updates an existing TaxRate.
         /// </summary>
-        /// <param name="vehicleType">The type of the vehicle.</param>
+        /// <param name="taxRate">The TaxRate with updated values.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>True if a TaxRate exists for the specified vehicle type, otherwise false.</returns>
-        Task<bool> TaxRateExistsAsync(string vehicleType, CancellationToken cancellationToken);
+        /// <returns>The updated TaxRate.</returns>
+        Task<TaxRate> UpdateTaxRateAsync(TaxRate taxRate, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deletes a TaxRate by its identifier.
+        /// </summary>
+        /// <param name="taxRateId">The identifier of the TaxRate to delete.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A Task representing the asynchronous operation.</returns>
+        Task DeleteTaxRateAsync(Guid taxRateId, CancellationToken cancellationToken);
     }
 }

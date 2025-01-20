@@ -33,7 +33,7 @@ namespace PTTS.Core.Domain.Interfaces
         /// <param name="vehicle">The vehicle with updated values.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The updated vehicle.</returns>
-        PublicTransportVehicle UpdateVehicle(PublicTransportVehicle vehicle, CancellationToken cancellationToken);
+        void UpdateVehicle(PublicTransportVehicle vehicle, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a PublicTransportVehicle by its unique identifier.
@@ -41,15 +41,7 @@ namespace PTTS.Core.Domain.Interfaces
         /// <param name="id">The identifier of the vehicle to delete.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        Task DeleteVehicleAsync(int id, CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Checks if a PublicTransportVehicle exists by its unique identifier.
-        /// </summary>
-        /// <param name="id">The identifier of the vehicle.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>True if the vehicle exists; otherwise, false.</returns>
-        Task<bool> VehicleExistsAsync(int id, CancellationToken cancellationToken);
+        void DeleteVehicleAsync(PublicTransportVehicle vehicle, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets vehicles by user identifier.

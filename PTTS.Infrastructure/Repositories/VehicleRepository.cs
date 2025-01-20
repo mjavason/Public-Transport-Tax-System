@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PTTS.Core.Domain;
 using PTTS.Core.Domain.Interfaces;
 using PTTS.Infrastructure.DatabaseContext;
 
@@ -16,14 +15,14 @@ namespace PTTS.Infrastructure.Repositories
 
         public async Task<Core.Domain.VehicleAggregate.PublicTransportVehicle?> GetVehicleByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _context.PublicTransportVehicles
-                .FirstOrDefaultAsync(vehicle => vehicle.Id == id, cancellationToken);
+            return await _context.PublicTransportVehicles.Include(t => t.User)
+            .FirstOrDefaultAsync(vehicle => vehicle.Id == id, cancellationToken);
         }
 
         public async Task<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>> GetAllVehiclesAsync(CancellationToken cancellationToken)
         {
-            return await _context.PublicTransportVehicles
-                .ToListAsync(cancellationToken);
+            return await _context.PublicTransportVehicles.Include(t => t.User)
+            .ToListAsync(cancellationToken);
         }
 
         public async Task CreateVehicleAsync(Core.Domain.VehicleAggregate.PublicTransportVehicle vehicle, CancellationToken cancellationToken)
@@ -31,32 +30,19 @@ namespace PTTS.Infrastructure.Repositories
             await _context.PublicTransportVehicles.AddAsync(vehicle, cancellationToken);
         }
 
-        public Core.Domain.VehicleAggregate.PublicTransportVehicle UpdateVehicle(Core.Domain.VehicleAggregate.PublicTransportVehicle vehicle, CancellationToken cancellationToken)
+        public void UpdateVehicle(Core.Domain.VehicleAggregate.PublicTransportVehicle vehicle, CancellationToken cancellationToken)
         {
             _context.PublicTransportVehicles.Update(vehicle);
-            return vehicle;
         }
 
-        public async Task DeleteVehicleAsync(int id, CancellationToken cancellationToken)
+        public void DeleteVehicleAsync(Core.Domain.VehicleAggregate.PublicTransportVehicle vehicle, CancellationToken cancellationToken)
         {
-            var vehicle = await _context.PublicTransportVehicles
-                .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
-
-            if (vehicle != null)
-            {
-                _context.PublicTransportVehicles.Remove(vehicle);
-            }
-        }
-
-        public async Task<bool> VehicleExistsAsync(int id, CancellationToken cancellationToken)
-        {
-            return await _context.PublicTransportVehicles
-                .AnyAsync(vehicle => vehicle.Id == id, cancellationToken);
+            _context.PublicTransportVehicles.Remove(vehicle);
         }
 
         public async Task<IReadOnlyList<Core.Domain.VehicleAggregate.PublicTransportVehicle>> GetVehiclesByUserIdAsync(string userId, CancellationToken cancellationToken)
         {
-            return await _context.PublicTransportVehicles
+            return await _context.PublicTransportVehicles.Include(t => t.User)
                 .Where(vehicle => vehicle.UserId == userId)
                 .ToListAsync(cancellationToken);
         }

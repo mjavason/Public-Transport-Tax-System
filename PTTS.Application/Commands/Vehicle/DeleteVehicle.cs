@@ -26,11 +26,10 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
             try
             {
                 var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.Id, cancellationToken);
-
                 if (vehicle == null)
-                    return Result.NotFound<Core.Domain.VehicleAggregate.PublicTransportVehicle>(["Vehicle not found"]);
+                    return Result.NotFound(new List<string> { "Vehicle not found" });
 
-                await _vehicleRepository.DeleteVehicleAsync(request.Id, cancellationToken);
+                _vehicleRepository.DeleteVehicleAsync(vehicle, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
                 return Result.Success();

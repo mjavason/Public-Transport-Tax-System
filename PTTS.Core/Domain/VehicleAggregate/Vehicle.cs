@@ -1,7 +1,7 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using PTTS.Core.Domain.Constants;
 using PTTS.Core.Domain.UserAggregate;
+using PTTS.Core.Domain.VehicleAggregate.DTOs;
 
 namespace PTTS.Core.Domain.VehicleAggregate
 {
@@ -20,10 +20,7 @@ namespace PTTS.Core.Domain.VehicleAggregate
 
         private PublicTransportVehicle(string vehicleType, string userId, string make, string model, string plateNumber)
         {
-            if (!AppConstants.VehicleTypes.Contains(vehicleType))
-            {
-                throw new ArgumentException($"Invalid vehicle type: {vehicleType}.", nameof(vehicleType));
-            }
+            ValidateVehicle(vehicleType);
 
             VehicleId = GenerateVehicleId(vehicleType);
             VehicleType = vehicleType;
@@ -38,6 +35,36 @@ namespace PTTS.Core.Domain.VehicleAggregate
             return new PublicTransportVehicle(vehicleType, userId, make, model, plateNumber);
         }
 
+        public void Update(UpdateVehicleDto updateVehicleDto)
+        {
+            ValidateUpdateInputs(updateVehicleDto);
+
+            UpdateVehicleType(updateVehicleDto.VehicleType);
+            UpdateMake(updateVehicleDto.Make);
+            UpdateModel(updateVehicleDto.Model);
+            UpdatePlateNumber(updateVehicleDto.PlateNumber);
+        }
+
+        private void UpdateVehicleType(string? vehicleType)
+        {
+            if (!string.IsNullOrEmpty(vehicleType)) VehicleType = vehicleType;
+        }
+
+        private void UpdateMake(string? make)
+        {
+            if (!string.IsNullOrEmpty(make)) Make = make;
+        }
+
+        private void UpdateModel(string? model)
+        {
+            if (!string.IsNullOrEmpty(model)) Model = model;
+        }
+
+        private void UpdatePlateNumber(string? plateNumber)
+        {
+            if (!string.IsNullOrEmpty(plateNumber)) PlateNumber = plateNumber;
+        }
+
         private static string GenerateVehicleId(string vehicleType)
         {
             string pretext = vehicleType[..2].ToUpper();
@@ -47,6 +74,27 @@ namespace PTTS.Core.Domain.VehicleAggregate
             int randomNumber = random.Next(10000, 99999);
 
             return $"{pretext}{randomNumber}";
+        }
+
+        private void ValidateVehicle(string vehicleType)
+        {
+            if (!AppConstants.VehicleTypes.Contains(vehicleType))
+                throw new ArgumentException($"Invalid vehicle type: {vehicleType}. Must be one of {string.Join(", ", AppConstants.VehicleTypes)}", nameof(vehicleType));
+        }
+
+        private void ValidateUpdateInputs(UpdateVehicleDto updateVehicleDto)
+        {
+            if (updateVehicleDto.VehicleType != null && !AppConstants.VehicleTypes.Contains(updateVehicleDto.VehicleType))
+                throw new ArgumentException($"Invalid vehicle type: {updateVehicleDto.VehicleType}. Must be one of {string.Join(", ", AppConstants.VehicleTypes)}", nameof(updateVehicleDto.VehicleType));
+
+            if (string.IsNullOrWhiteSpace(updateVehicleDto.Make))
+                throw new ArgumentException("Make cannot be null or empty.", nameof(updateVehicleDto.Make));
+
+            if (string.IsNullOrWhiteSpace(updateVehicleDto.Model))
+                throw new ArgumentException("Model cannot be null or empty.", nameof(updateVehicleDto.Model));
+
+            if (string.IsNullOrWhiteSpace(updateVehicleDto.PlateNumber))
+                throw new ArgumentException("Plate number cannot be null or empty.", nameof(updateVehicleDto.PlateNumber));
         }
     }
 }

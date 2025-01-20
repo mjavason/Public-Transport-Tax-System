@@ -38,7 +38,6 @@ namespace PTTS.API.Controllers
             return GetActionResult(result, "Users vehicles retrieved successfully");
         }
 
-        // GET api/publictransportvehicle/{id}
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(SuccessResponse<Core.Domain.VehicleAggregate.PublicTransportVehicle>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -57,12 +56,11 @@ namespace PTTS.API.Controllers
         public async Task<IActionResult> CreateVehicle([FromBody] CreateVehicleDto createVehicleDto)
         {
             string userId = GetUserId();
-            var command = new CreateVehicleCommand { UserId = userId, VehicleType = createVehicleDto.vehicleType };
+            var command = new CreateVehicleCommand { UserId = userId, VehicleType = createVehicleDto.VehicleType, Make = createVehicleDto.Make, Model = createVehicleDto.Model, PlateNumber = createVehicleDto.PlateNumber };
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : GetActionResult(result);
         }
 
-        // PUT api/publictransportvehicle
         [HttpPut]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -73,7 +71,6 @@ namespace PTTS.API.Controllers
             return result.IsSuccess ? NoContent() : GetActionResult(result);
         }
 
-        // DELETE api/publictransportvehicle/{id}
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]

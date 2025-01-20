@@ -1,8 +1,6 @@
 using MediatR;
-using PTTS.Core.Domain;
 using PTTS.Core.Domain.Interfaces;
 using PTTS.Core.Shared;
-using System.Collections.Generic;
 
 namespace PTTS.Application.Queries.PublicTransportVehicle
 {

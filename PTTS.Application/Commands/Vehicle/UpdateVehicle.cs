@@ -1,16 +1,14 @@
 using MediatR;
-using PTTS.Core.Domain;
 using PTTS.Core.Domain.Common;
 using PTTS.Core.Domain.Interfaces;
+using PTTS.Core.Domain.VehicleAggregate.DTOs;
 using PTTS.Core.Shared;
 
 namespace PTTS.Application.Commands.PublicTransportVehicle
 {
     public class UpdateVehicleCommand : IRequest<Result>
     {
-        public int Id { get; set; }
-        public string? VehicleType { get; set; }
-        // public string UserId { get; set; }
+        public required UpdateVehicleDto updateVehicleDto { get; set; }
     }
 
     public class UpdateVehicleCommandHandler : IRequestHandler<UpdateVehicleCommand, Result>
@@ -28,14 +26,11 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
         {
             try
             {
-                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.Id, cancellationToken);
+                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.updateVehicleDto.VehicleId, cancellationToken);
                 if (vehicle == null)
-                    return Result.NotFound<Core.Domain.VehicleAggregate.PublicTransportVehicle>(["Vehicle not found"]);
+                    return Result.NotFound(["Vehicle not found"]);
 
-                // Update the vehicle properties
-                // vehicle = Core.Domain.VehicleAggregate.PublicTransportVehicle.Create(request.VehicleType, request.UserId);
-                if (request.VehicleType is not null) Core.Domain.VehicleAggregate.PublicTransportVehicle.UpdateVehicleType(vehicle, request.VehicleType);
-
+                vehicle.Update(request.updateVehicleDto);
                 _vehicleRepository.UpdateVehicle(vehicle, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -12,7 +12,8 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
-// app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -27,7 +28,7 @@ if (app.Environment.IsDevelopment())
 // authGroup.MapIdentityApi<User>();
 
 // app.UseHttpsRedirection();
-app.MapGet("/", () => "API is live!");
+app.MapGet("/", () => "Live!");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

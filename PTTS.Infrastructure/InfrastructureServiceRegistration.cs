@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +66,13 @@ namespace PTTS.Infrastructure
                 };
 
             });
+
+            var smtpSettings = configuration.GetSection("Email:Smtp");
+
+     
+
+            // System.Console.WriteLine(configuration["Email:Smtp:Username"]);
+            // System.Console.WriteLine(configuration["Email:Smtp:Password"]);
 
             return services;
         }

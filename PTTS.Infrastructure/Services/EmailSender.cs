@@ -1,33 +1,45 @@
+using FluentEmail.Core;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
-using System.Net;
-using System.Net.Mail;
+using MimeKit;
 
-namespace PTTS.Infrastructure.Services;
-public class EmailSender(IConfiguration configuration) : IEmailSender
+namespace PTTS.Infrastructure.Services
 {
-    private readonly IConfiguration _configuration = configuration;
-
-    public async Task SendEmailAsync(string email, string subject, string message)
+    public class EmailSender : IEmailSender
     {
-        using var smtp = new SmtpClient(_configuration["Email:Smtp:Host"])
-        {
-            Port = int.Parse(_configuration["Email:Smtp:Port"] ?? "587"),
-            Credentials = new NetworkCredential(
-                  _configuration["Email:Smtp:Username"],
-                  _configuration["Email:Smtp:Password"]),
-            EnableSsl = true,
-        };
 
-        var mailMessage = new MailMessage
+        private readonly IConfiguration _configuration;
+        public EmailSender(IConfiguration configuration)
         {
-            From = new MailAddress(_configuration["Email:From"] ?? "example@gmail.com"),
-            Subject = subject,
-            Body = message,
-            IsBodyHtml = true,
-        };
-        mailMessage.To.Add(email);
+            _configuration = configuration;
+        }
 
-        await smtp.SendMailAsync(mailMessage);
+        public async Task SendEmailAsync(string email, string subject, string message)
+        {
+            var smtpSettings = _configuration.GetSection("Email:Smtp");
+
+            var mimeMessage = new MimeMessage();
+            mimeMessage.From.Add(new MailboxAddress("PTTS System", _configuration["Email:From"] ?? "donotreply@example.com"));
+            mimeMessage.To.Add(new MailboxAddress(email, email));
+            mimeMessage.Subject = subject;
+            mimeMessage.Body = new TextPart("html") { Text = message };
+
+            // Create a new SMTP client using MailKit
+            using (var client = new SmtpClient())
+            {
+                // Connect to the SMTP server using the settings
+                await client.ConnectAsync(smtpSettings["Host"], int.Parse(smtpSettings["Port"] ?? "587"), true);
+
+                // Authenticate with the SMTP server using the credentials
+                await client.AuthenticateAsync(smtpSettings["Username"], smtpSettings["Password"]);
+
+                // Send the email message
+                await client.SendAsync(mimeMessage);
+
+                // Disconnect from the SMTP server
+                await client.DisconnectAsync(true);
+            }
+        }
     }
 }

@@ -1,5 +1,4 @@
 using PTTS.API.Middleware;
-using PTTS.API.Middlewares;
 using PTTS.Application;
 using PTTS.Infrastructure;
 using Scalar.AspNetCore;
@@ -13,7 +12,7 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
-app.UseMiddleware<ExceptionMiddleware>();
+// app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())

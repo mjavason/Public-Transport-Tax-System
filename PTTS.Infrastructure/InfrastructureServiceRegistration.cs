@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ using PTTS.Core.Domain.UserAggregate.Interfaces;
 using PTTS.Infrastructure.Credentials;
 using PTTS.Infrastructure.DatabaseContext;
 using PTTS.Infrastructure.Repositories;
+using PTTS.Infrastructure.Services;
 
 namespace PTTS.Infrastructure
 {
@@ -22,6 +24,7 @@ namespace PTTS.Infrastructure
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
             // Register Repositories
+            services.AddTransient<IEmailSender, EmailSender>();
             services.AddScoped<IPublicTransportVehicleRepository, PublicTransportVehicleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITaxRateRepository, TaxRateRepository>();

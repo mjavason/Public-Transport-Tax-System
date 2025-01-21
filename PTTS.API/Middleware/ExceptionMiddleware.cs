@@ -1,7 +1,7 @@
 using System.Net;
 using PTTS.API.Filters.Model;
 
-namespace PTTS.API.Middlewares;
+namespace PTTS.API.Middleware;
 
 public class ExceptionMiddleware
 {

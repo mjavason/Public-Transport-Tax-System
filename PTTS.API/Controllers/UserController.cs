@@ -1,6 +1,7 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PTTS.Core.Domain.UserAggregate;
 using PTTS.Infrastructure.DatabaseContext;
 using TodoAppWithAuth.Controllers;
 
@@ -11,9 +12,12 @@ namespace PTTS.API.Controllers
     public class UserController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public UserController(ApplicationDbContext context)
+
+        public UserController(ApplicationDbContext context, UserManager<User> userManager)
         {
+            _userManager = userManager;
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
@@ -31,6 +35,45 @@ namespace PTTS.API.Controllers
             }
 
             return Ok(user);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserProfile(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new
+            {
+                user.UserName,
+                user.Email,
+                user.FullName,
+                user.DateOfBirth
+            });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUserProfile(string id, [FromBody] UpdateUserProfileDto model)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.FullName = model.FullName;
+            user.DateOfBirth = model.DateOfBirth;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
         }
 
     }

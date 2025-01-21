@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using PTTS.Core.Domain.Common;
 using PTTS.Core.Domain.Interfaces;
 using PTTS.Core.Domain.TaxRateAggregate.Interfaces;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.UserAggregate.Interfaces;
+using PTTS.Infrastructure.Credentials;
 using PTTS.Infrastructure.DatabaseContext;
 using PTTS.Infrastructure.Repositories;
 
@@ -16,25 +19,49 @@ namespace PTTS.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Add Authorization and Authentication
-            services.AddAuthorization();
-            services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
-            services.AddIdentityCore<User>()
-           .AddEntityFrameworkStores<ApplicationDbContext>()
-           .AddApiEndpoints();
-
-            // Register DbContext with connection string from configuration
-            services.AddDbContext<ApplicationDbContext>(dbContextOptions =>
-                dbContextOptions.UseNpgsql(configuration.GetConnectionString("Database"), options =>
-                {
-                    options.EnableRetryOnFailure();
-                }));
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
             // Register Repositories
             services.AddScoped<IPublicTransportVehicleRepository, PublicTransportVehicleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITaxRateRepository, TaxRateRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            //Add database context
+            services.AddDbContext<ApplicationDbContext>(dbContextOptions =>
+           dbContextOptions.UseNpgsql(configuration.GetConnectionString("Database"), options =>
+           {
+               options.EnableRetryOnFailure();
+           }));
+
+            services.AddIdentity<User, IdentityRole>(options =>
+                        {
+                            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                            options.User.RequireUniqueEmail = true;
+                            options.Password.RequireDigit = false;
+                            options.Password.RequiredLength = 6;
+                            options.Password.RequireNonAlphanumeric = false;
+                            options.Password.RequireUppercase = false;
+                            options.Password.RequireLowercase = true;
+                        })
+                            .AddEntityFrameworkStores<ApplicationDbContext>()
+                            .AddDefaultTokenProviders();
+
+            services.AddAuthentication().AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidIssuer = configuration["JwtSettings:Issuer"],
+                    ValidAudience = configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                        configuration["JwtSettings:Key"] ?? ""))
+                };
+
+            });
 
             return services;
         }

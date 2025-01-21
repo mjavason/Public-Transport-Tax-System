@@ -1,6 +1,6 @@
+using PTTS.API.Middleware;
 using PTTS.API.Middlewares;
 using PTTS.Application;
-using PTTS.Core.Domain.UserAggregate;
 using PTTS.Infrastructure;
 using Scalar.AspNetCore;
 
@@ -8,16 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-
-// Add Swagger
 builder.Services.AddOpenApi();
-
-// Add Infrastructure services
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<LoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -26,14 +23,12 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-app.MapGet("/", () => "Hello World!");
-
 // Group Identity API routes under "/auth"
-var authGroup = app.MapGroup("/auth").WithTags("Authentication");
-authGroup.MapIdentityApi<User>();
+// var authGroup = app.MapGroup("/auth").WithTags("Authentication");
+// authGroup.MapIdentityApi<User>();
 
 // app.UseHttpsRedirection();
+app.MapGet("/", () => "API is live!");
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

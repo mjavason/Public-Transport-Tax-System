@@ -13,7 +13,7 @@ builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionMiddleware>();
+// app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<LoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())

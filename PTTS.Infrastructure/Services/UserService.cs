@@ -1,102 +1,89 @@
-// using System.IdentityModel.Tokens.Jwt;
-// using System.Security.Claims;
-// using System.Text;
-// using Microsoft.AspNetCore.Identity;
-// using Microsoft.Extensions.Options;
-// using Microsoft.IdentityModel.Tokens;
-// using PTTS.Core.Domain.UserAggregate;
-// using PTTS.Core.Domain.UserAggregate.DTOs;
-// using PTTS.Core.Domain.UserAggregate.Interfaces;
-// using PTTS.Core.Shared;
-// using PTTS.Infrastructure.Credentials;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using PTTS.Core.Domain.UserAggregate;
+using PTTS.Core.Domain.UserAggregate.Interfaces;
+using PTTS.Core.Shared;
+using PTTS.Infrastructure.Credentials;
 
-// namespace ShopAllocationPortal.Infrastructure.Services;
+namespace ShopAllocationPortal.Infrastructure.Services;
 
-// public class UserService : IUserService
-// {
-//     private readonly UserManager<User> _userManager;
-//     private readonly SignInManager<User> _signInManager;
-//     private readonly JwtSettings _jwtSettings;
+public class UserService : IUserService
+{
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly JwtSettings _jwtSettings;
 
-//     public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<JwtSettings> jwtSettings)
-//     {
-//         _userManager = userManager;
-//         _signInManager = signInManager;
-//         _jwtSettings = jwtSettings.Value;
-//     }
+    public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<JwtSettings> jwtSettings)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _jwtSettings = jwtSettings.Value;
+    }
 
-//     public Task<Result<AuthResponse?>> AuthenticateUserAsync(string email, string password)
-//     {
-//         throw new NotImplementedException();
-//     }
+    public async Task<Result> Register(string firstName, string lastName, string email, string password)
+    {
+        var user = User.Create(firstName, lastName, email);
+        user.UserName = email;
+        var result = await _userManager.CreateAsync(user, password);
+        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
 
-//     // public async Task<Result<AuthResponse?>> AuthenticateUserAsync(string email, string password)
-//     // {
-//     //     var user = await _userManager.FindByEmailAsync(email);
-//     //     if (user == null)
-//     //     {
-//     //         return Result.Unauthorized<AuthResponse?>(["Invalid credentials, email or password is incorrect"]);
-//     //     }
+        // Send confirmation email
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        return Result.Success(token);
+    }
 
-//     //     var result = await _signInManager.CheckPasswordSignInAsync(user, password, true);
+    public async Task<Result> ConfirmEmail(string userId, string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.NotFound(["User not found"]);
 
-//     //     if (result.IsLockedOut)
-//     //     {
-//     //         return Result.Unauthorized<AuthResponse?>(["Your account is locked. Please try again later or contact support."]);
-//     //     }
-//     //     if (result.Succeeded == false)
-//     //     {
-//     //         return Result.Unauthorized<AuthResponse?>(["Invalid credentials, email or password is incorrect"]);
-//     //     }
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded) return Result.BadRequest(["Email confirmation failed"]);
 
-//     //     var (jwtSecurityToken, userRole) = await GenerateSecurityToken(user);
+        return Result.Success();
+    }
 
-//     //     var authResponse = new AuthResponse
-//     //     {
-//     //         Email = user.Email,
-//     //         FirstName = user.FirstName,
-//     //         LastName = user.LastName,
-//     //         Role = userRole,
-//     //         Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
-//     //     };
+    public async Task<Result> Login(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return Result.Unauthorized(["Invalid email or password"]);
 
-//     //     return Result.Success<AuthResponse?>(authResponse);
-//     // }
+        var result = await _userManager.CheckPasswordAsync(user, password);
+        if (!result)
+            return Result.Unauthorized(["Invalid email or password"]);
 
+        var token = GenerateJwtToken(user);
+        return Result.Success(token);
+    }
 
-//     public async Task<(JwtSecurityToken, string)> GenerateSecurityToken(User user)
-//     {
-//         var userClaims = await _userManager.GetClaimsAsync(user);
-//         var userRoles = await _userManager.GetRolesAsync(user);
-//         var userId = user.Id;
+    private string GenerateJwtToken(User user)
+    {
+        var claims = new[]
+        {
+                new Claim(JwtRegisteredClaimNames.Email,user.Email ?? String.Empty),
+                new Claim(JwtRegisteredClaimNames.Sub,user.Id),
+                new Claim("uid", user.Id),
+                new Claim("email", user.Email ?? String.Empty),
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+    };
 
-//         var roleClaims = userRoles
-//             .Select(q => new Claim(ClaimTypes.Role, q))
-//             .ToList();
-//         var claims = new[]
-//             {
-//                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
-//                 new Claim(JwtRegisteredClaimNames.Sub,user.Id),
-//                 new Claim("uid",userId),
-//                 new Claim("email",user.Email),
-//                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-//                 new Claim("role", userRoles.FirstOrDefault() ?? ""),
-//             }
-//             .Union(roleClaims)
-//             .Union(userClaims);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-//         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-//         var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            issuer: "YourIssuer",
+            audience: "YourAudience",
+            claims: claims,
+            expires: DateTime.Now.AddHours(1),
+            signingCredentials: creds
+        );
 
-//         var jwtSecurityToken = new JwtSecurityToken(
-//             issuer: _jwtSettings.Issuer,
-//             audience: _jwtSettings.Audience,
-//             claims: claims,
-//             expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
-//             signingCredentials: signingCredentials
-//         );
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
 
-//         return (jwtSecurityToken, userRoles.FirstOrDefault() ?? string.Empty);
-//     }
-
-// }
+}

@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -31,25 +30,25 @@ namespace PTTS.Infrastructure
             services.AddScoped<ITaxRateRepository, TaxRateRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            //Add database context
+            // Add database context
             services.AddDbContext<ApplicationDbContext>(dbContextOptions =>
-           dbContextOptions.UseNpgsql(configuration.GetConnectionString("Database"), options =>
-           {
-               options.EnableRetryOnFailure();
-           }));
+                dbContextOptions.UseNpgsql(configuration.GetConnectionString("Database"), options =>
+                {
+                    options.EnableRetryOnFailure();
+                }));
 
             services.AddIdentity<User, IdentityRole>(options =>
-                        {
-                            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                            options.User.RequireUniqueEmail = true;
-                            options.Password.RequireDigit = false;
-                            options.Password.RequiredLength = 6;
-                            options.Password.RequireNonAlphanumeric = false;
-                            options.Password.RequireUppercase = false;
-                            options.Password.RequireLowercase = true;
-                        })
-                            .AddEntityFrameworkStores<ApplicationDbContext>()
-                            .AddDefaultTokenProviders();
+                {
+                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                    options.User.RequireUniqueEmail = true;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = true;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddAuthentication().AddJwtBearer(options =>
             {
@@ -61,18 +60,9 @@ namespace PTTS.Infrastructure
                     ClockSkew = TimeSpan.Zero,
                     ValidIssuer = configuration["JwtSettings:Issuer"],
                     ValidAudience = configuration["JwtSettings:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                        configuration["JwtSettings:Key"] ?? ""))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"] ?? ""))
                 };
-
             });
-
-            var smtpSettings = configuration.GetSection("Email:Smtp");
-
-     
-
-            // System.Console.WriteLine(configuration["Email:Smtp:Username"]);
-            // System.Console.WriteLine(configuration["Email:Smtp:Password"]);
 
             return services;
         }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.Core.Domain.UserAggregate;
@@ -19,17 +20,19 @@ namespace PTTS.API.Controllers
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        // [HttpGet(Name = "GetMyProfile")]
-        // [Authorize]
-        // public async Task<IActionResult> GetMyProfile()
-        // {
-        //     // Access the ClaimsPrincipal via HttpContext.User
-        //     string userId = GetUserId();
-        //     var user = await _context.Users.FindAsync(userId);
+        [HttpGet(Name = "GetMyProfile")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            // Access the ClaimsPrincipal via HttpContext.User
+            string userId = GetUserId();
+            var user = await _context.Users.FindAsync(userId);
 
-        //     if (user == null) return NotFound("User not found.");
-        //     return Ok(user);
-        // }
+            if (user == null) return NotFound("User not found.");
+            return Ok(user);
+        }
 
         // [HttpGet("{id}")]
         // public async Task<IActionResult> GetUserProfile(string id)

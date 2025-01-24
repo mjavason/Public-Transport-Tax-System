@@ -66,7 +66,6 @@ public class UserService : IUserService
             return Result.Unauthorized<AuthResponse?>(["Invalid email or password"]);
 
         var token = GenerateJwtToken(user);
-
         var authResponse = new AuthResponse
         {
             Email = user.Email ?? string.Empty,

@@ -10,6 +10,7 @@ namespace PTTS.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TaxRateController : ApiBaseController
     {
         public TaxRateController(IMediator mediator) : base(mediator) { }
@@ -19,7 +20,6 @@ namespace PTTS.API.Controllers
         [EndpointDescription("Returns a complete list of all tax rates stored in the system.")]
         [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.TaxRateAggregate.TaxRate>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-        [Authorize]
         public async Task<IActionResult> GetAllTaxRates([FromRoute] GetAllTaxRatesQuery query)
         {
             var result = await _mediator.Send(query);
@@ -31,7 +31,6 @@ namespace PTTS.API.Controllers
         [EndpointDescription("Filters the list of tax rates based on the provided parameters such as vehicle type, rate, and local government.")]
         [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.TaxRateAggregate.TaxRate>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-        [Authorize]
         public async Task<IActionResult> FilterTaxRate([FromQuery] FilterTaxRateDto filter)
         {
             var query = new FilterTaxRateQuery { Filter = filter };
@@ -45,7 +44,6 @@ namespace PTTS.API.Controllers
         [EndpointDescription("Fetches the details of a specific tax rate using its unique identifier.")]
         [ProducesResponseType(typeof(SuccessResponse<Core.Domain.TaxRateAggregate.TaxRate>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-        [Authorize]
         public async Task<IActionResult> GetTaxRatesById([FromRoute] GetTaxRateByIdQuery query)
         {
             var result = await _mediator.Send(query);
@@ -57,7 +55,6 @@ namespace PTTS.API.Controllers
         [EndpointDescription("Adds a new tax rate to the system with details like vehicle type, rate, and local government.")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-        [Authorize]
         public async Task<IActionResult> CreateTaxRate([FromBody] CreateTaxRateCommand command)
         {
             var result = await _mediator.Send(command);
@@ -69,7 +66,6 @@ namespace PTTS.API.Controllers
         [EndpointDescription("Modifies the details of an existing tax rate, including vehicle type, rate, and local government.")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-        [Authorize]
         public async Task<IActionResult> UpdateTaxRate([FromBody] UpdateTaxRateDto update)
         {
             var command = new UpdateTaxRateCommand { Update = update };
@@ -83,7 +79,6 @@ namespace PTTS.API.Controllers
         [EndpointDescription("Removes a tax rate from the system using its unique identifier.")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-        [Authorize]
         public async Task<IActionResult> DeleteTaxRate([FromRoute] DeleteTaxRateCommand command)
         {
             var result = await _mediator.Send(command);

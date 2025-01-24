@@ -7,6 +7,7 @@ using TodoAppWithAuth.Controllers;
 
 namespace PTTS.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : BaseController
@@ -21,7 +22,6 @@ namespace PTTS.API.Controllers
         }
 
         [HttpGet(Name = "GetMyProfile")]
-        [Authorize(AuthenticationSchemes = "Bearer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetMyProfile()

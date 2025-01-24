@@ -52,19 +52,23 @@ namespace PTTS.Infrastructure
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // services.AddAuthentication().AddJwtBearer(options =>
-            // {
-            //     options.TokenValidationParameters = new TokenValidationParameters
-            //     {
-            //         ValidateIssuerSigningKey = true,
-            //         ValidateIssuer = true,
-            //         ValidateAudience = true,
-            //         ClockSkew = TimeSpan.Zero,
-            //         ValidIssuer = configuration["JwtSettings:Issuer"],
-            //         ValidAudience = configuration["JwtSettings:Audience"],
-            //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"] ?? ""))
-            //     };
-            // });
+            services
+                .AddAuthentication()
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ClockSkew = TimeSpan.Zero,
+                        ValidIssuer = configuration["JwtSettings:Issuer"],
+                        ValidAudience = configuration["JwtSettings:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                            configuration["JwtSettings:Key"] ?? ""))
+                    };
+                });
+
 
             return services;
         }

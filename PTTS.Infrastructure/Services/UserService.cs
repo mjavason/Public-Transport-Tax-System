@@ -64,7 +64,7 @@ public class UserService : IUserService
         if (!result)
             return Result.Unauthorized<AuthResponse?>(["Invalid email or password"]);
 
-        var token = GenerateJwtToken(user);
+        var token = await GenerateJwtToken(user);
         var authResponse = new AuthResponse
         {
             Email = user.Email ?? string.Empty,
@@ -76,8 +76,10 @@ public class UserService : IUserService
         return Result.Success<AuthResponse?>(authResponse);
     }
 
-    private string GenerateJwtToken(User user)
+    private async Task<string> GenerateJwtToken(User user)
     {
+        var userClaims = await _userManager.GetClaimsAsync(user);
+
         var claims = new[]
         {
                 new Claim(JwtRegisteredClaimNames.Email,user.Email ?? String.Empty),
@@ -85,20 +87,21 @@ public class UserService : IUserService
                 new Claim("uid", user.Id),
                 new Claim("email", user.Email ?? String.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-    };
+ }
+            .Union(userClaims);
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
-            issuer: "YourIssuer",
-            audience: "YourAudience",
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: creds
-        );
+        var jwtSecurityToken = new JwtSecurityToken(
+          issuer: _jwtSettings.Issuer,
+          audience: _jwtSettings.Audience,
+          claims: claims,
+          expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+          signingCredentials: creds
+      );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
     }
 
     public async Task<Result> ForgotPassword(string email)

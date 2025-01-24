@@ -10,7 +10,6 @@ using PTTS.Core.Domain.UserAggregate.DTOs;
 using PTTS.Core.Domain.UserAggregate.Interfaces;
 using PTTS.Core.Shared;
 using PTTS.Infrastructure.Credentials;
-using PTTS.Infrastructure.Services;
 
 namespace ShopAllocationPortal.Infrastructure.Services;
 
@@ -100,6 +99,29 @@ public class UserService : IUserService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<Result> ForgotPassword(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return Result.NotFound(["User not found"]);
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var resetLink = $"http://localhost:5085/api/Auth/reset-password?userId={user.Id}&token={token}";
+        await _emailSender.SendEmailAsync(email, "Reset Password", $"Click the link to reset your password: {resetLink}");
+
+        return Result.Success();
+    }
+
+    public async Task<Result> ResetPassword(string userId, string token, string password)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.NotFound(new List<string> { "User not found" });
+
+        var result = await _userManager.ResetPasswordAsync(user, token, password);
+        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
+
+        return Result.Success();
     }
 
 }

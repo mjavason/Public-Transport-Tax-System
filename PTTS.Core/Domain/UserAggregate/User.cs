@@ -7,6 +7,7 @@ namespace PTTS.Core.Domain.UserAggregate
     {
         public string? Initials { get; set; }
         public string? FullName { get; set; }
+        // public new string Email { get; private set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
@@ -20,6 +21,7 @@ namespace PTTS.Core.Domain.UserAggregate
             Email = email;
             NormalizedUserName = email.ToUpperInvariant();
             NormalizedEmail = email.ToUpperInvariant();
+            UserName = email;
         }
 
         public static User Create(string firstName, string lastName, string email)

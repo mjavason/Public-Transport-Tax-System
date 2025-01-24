@@ -14,6 +14,7 @@ using PTTS.Infrastructure.Credentials;
 using PTTS.Infrastructure.DatabaseContext;
 using PTTS.Infrastructure.Repositories;
 using PTTS.Infrastructure.Services;
+using ShopAllocationPortal.Infrastructure.Services;
 
 namespace PTTS.Infrastructure
 {
@@ -25,6 +26,7 @@ namespace PTTS.Infrastructure
 
             // Register Repositories
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPublicTransportVehicleRepository, PublicTransportVehicleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITaxRateRepository, TaxRateRepository>();

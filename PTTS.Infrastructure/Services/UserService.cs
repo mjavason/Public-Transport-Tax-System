@@ -2,38 +2,46 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PTTS.Core.Domain.UserAggregate;
+using PTTS.Core.Domain.UserAggregate.DTOs;
 using PTTS.Core.Domain.UserAggregate.Interfaces;
 using PTTS.Core.Shared;
 using PTTS.Infrastructure.Credentials;
+using PTTS.Infrastructure.Services;
 
 namespace ShopAllocationPortal.Infrastructure.Services;
 
 public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
     private readonly JwtSettings _jwtSettings;
+    private readonly IEmailSender _emailSender;
 
-    public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<JwtSettings> jwtSettings)
+    public UserService(UserManager<User> userManager, IEmailSender emailSender, IOptions<JwtSettings> jwtSettings)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
         _jwtSettings = jwtSettings.Value;
+        _emailSender = emailSender;
     }
 
     public async Task<Result> Register(string firstName, string lastName, string email, string password)
     {
         var user = User.Create(firstName, lastName, email);
-        user.UserName = email;
         var result = await _userManager.CreateAsync(user, password);
         if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
 
         // Send confirmation email
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        return Result.Success(token);
+
+        // Send confirmation email
+        // var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { userId = user.Id, token }, Request.Scheme);
+        var confirmationLink = $"http://localhost:5085/api/Auth/confirm-email?userId={user.Id}";
+        await _emailSender.SendEmailAsync(email, "Confirm your email", $"Click the link to confirm your email: {confirmationLink}");
+
+        return Result.Success();
     }
 
     public async Task<Result> ConfirmEmail(string userId, string token)
@@ -47,18 +55,27 @@ public class UserService : IUserService
         return Result.Success();
     }
 
-    public async Task<Result> Login(string email, string password)
+    public async Task<Result<AuthResponse?>> Login(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
-            return Result.Unauthorized(["Invalid email or password"]);
+            return Result.Unauthorized<AuthResponse?>(["Invalid email or password"]);
 
         var result = await _userManager.CheckPasswordAsync(user, password);
         if (!result)
-            return Result.Unauthorized(["Invalid email or password"]);
+            return Result.Unauthorized<AuthResponse?>(["Invalid email or password"]);
 
         var token = GenerateJwtToken(user);
-        return Result.Success(token);
+
+        var authResponse = new AuthResponse
+        {
+            Email = user.Email ?? string.Empty,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Token = token
+        };
+
+        return Result.Success<AuthResponse?>(authResponse);
     }
 
     private string GenerateJwtToken(User user)

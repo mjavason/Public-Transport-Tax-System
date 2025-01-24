@@ -1,106 +1,54 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using PTTS.Core.Domain.UserAggregate;
+using PTTS.API.Filters.Model;
+using PTTS.Application.Features.Login;
+using PTTS.Application.Features.User;
 using PTTS.Core.Domain.UserAggregate.DTOs;
-using PTTS.Infrastructure.Credentials;
 
 namespace PTTS.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController : ApiBaseController
 {
-    private readonly UserManager<User> _userManager;
-    private readonly IEmailSender _emailSender;
-    private readonly JwtSettings _jwtSettings;
-
-    public AuthController(UserManager<User> userManager, IEmailSender emailSender, IOptions<JwtSettings> jwtSettings)
-    {
-        _userManager = userManager;
-        _emailSender = emailSender;
-        _jwtSettings = jwtSettings.Value;
-    }
+    public AuthController(IMediator mediator) : base(mediator) { }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+    [EndpointSummary("Register a new user")]
+    [EndpointDescription("Registers a new user with the provided details.")]
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register([FromBody] RegisterUserFeature feature)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var user = Core.Domain.UserAggregate.User.Create(registerDto.FirstName, registerDto.LastName, registerDto.Email);
-        user.UserName = registerDto.Email;
-        var result = await _userManager.CreateAsync(user, registerDto.Password);
-        if (!result.Succeeded) return BadRequest(result.Errors);
-
-        // Send confirmation email
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { userId = user.Id, token }, Request.Scheme);
-        await _emailSender.SendEmailAsync(registerDto.Email, "Confirm your email", $"Click the link to confirm your email: {confirmationLink}");
-
-        return Ok("User registered successfully. Please check your email to confirm your account.");
+        var result = await _mediator.Send(feature);
+            return result.IsSuccess ? NoContent() : GetActionResult(result);
     }
 
     [HttpGet("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    [EndpointSummary("Confirm email address")]
+    [EndpointDescription("Confirms the email address of the user.")]
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailFeature feature)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return NotFound("User not found.");
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _userManager.ConfirmEmailAsync(user, token);
-        if (!result.Succeeded) return BadRequest("Email confirmation failed.");
-
-        return Ok("Email confirmed successfully.");
+        var result = await _mediator.Send(feature);
+        return GetActionResult(result, "Email confirmed successfully");
     }
-
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    [EndpointSummary("User login")]
+    [EndpointDescription("Logs in the user with the provided credentials.")]
+    [ProducesResponseType(typeof(SuccessResponse<AuthResponse?>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Login([FromBody] LoginFeature feature)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
-        if (user == null)
-            return Unauthorized("Invalid email or password. Email doesnt exist");
-
-        var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-        if (!result)
-            return Unauthorized("Invalid email or password.");
-
-        // Generate token
-        var token = GenerateJwtToken(user);
-
-        return Ok(new { Token = token });
+        var result = await _mediator.Send(feature);
+        return GetActionResult(result, "Login successful");
     }
-
-    private string GenerateJwtToken(User user)
-    {
-        var claims = new[]
-        {
-                new Claim(JwtRegisteredClaimNames.Email,user.Email ?? String.Empty),
-                new Claim(JwtRegisteredClaimNames.Sub,user.Id),
-                new Claim("uid", user.Id),
-                new Claim("email", user.Email ?? String.Empty),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-    };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: "YourIssuer",
-            audience: "YourAudience",
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
 }

@@ -6,13 +6,14 @@ namespace PTTS.Application.Features.User
 {
     public class ConfirmEmailFeature : IRequest<Result>
     {
-        public required string Token { get; set; }
-        public required string UserId { get; set; }
+        public string Token { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
     }
 
     public class ConfirmEmailFeatureHandler : IRequestHandler<ConfirmEmailFeature, Result>
     {
         private readonly IUserService _userService;
+
         public ConfirmEmailFeatureHandler(IUserService userService)
         {
             _userService = userService;
@@ -20,8 +21,7 @@ namespace PTTS.Application.Features.User
 
         public async Task<Result> Handle(ConfirmEmailFeature request, CancellationToken cancellationToken)
         {
-            var result = await _userService.ConfirmEmail(request.UserId, request.Token);
-            return result;
+            return await _userService.ConfirmEmail(request.UserId, request.Token);
         }
     }
 }

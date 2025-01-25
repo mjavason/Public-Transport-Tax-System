@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.UserAggregate.Interfaces;
 using PTTS.Infrastructure.DatabaseContext;
-using System.Threading.Tasks;
 
 namespace PTTS.Infrastructure.Repositories
 {
@@ -15,32 +14,40 @@ namespace PTTS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<User?> GetByIdAsync(string userId)
+        public async Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
-            return await _context.Users.FindAsync(userId);
+            return await _context.Users.FirstOrDefaultAsync(user => user.Id == userId.ToString(), cancellationToken);
         }
 
-        public async Task AddAsync(User user)
+        public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
+            return await _context.Users.ToListAsync(cancellationToken);
         }
 
-        public Task UpdateAsync(User user)
+        public async Task AddAsync(User user, CancellationToken cancellationToken)
+        {
+            await _context.Users.AddAsync(user, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public void Update(User user)
+        {
+            _context.Users.Update(user);
+        }
+
+        public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            var user = await GetByIdAsync(userId, cancellationToken);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        public Task UpdateAsync(User user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
-
-        public Task DeleteAsync(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<User>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        // Other CRUD operations as needed
     }
 }

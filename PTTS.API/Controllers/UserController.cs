@@ -1,6 +1,8 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PTTS.Application.Queries.User;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.UserAggregate.DTOs;
 using PTTS.Infrastructure.DatabaseContext;
@@ -10,12 +12,12 @@ namespace PTTS.API.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : BaseController
+    public class UserController : ApiBaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
 
-        public UserController(ApplicationDbContext context, UserManager<User> userManager)
+        public UserController(ApplicationDbContext context, UserManager<User> userManager, IMediator mediator) : base(mediator)
         {
             _userManager = userManager;
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -27,11 +29,11 @@ namespace PTTS.API.Controllers
         public async Task<IActionResult> GetMyProfile()
         {
             // Access the ClaimsPrincipal via HttpContext.User
-            string userId = GetUserId();
-            var user = await _context.Users.FindAsync(userId);
+            Guid userId = Guid.Parse(GetUserId());
+            var query = new GetUserByIdQuery { UserId = userId };
+            var result = await _mediator.Send(query);
 
-            if (user == null) return NotFound("User not found.");
-            return Ok(user);
+            return GetActionResult(result, "User profile retrieved successfully");
         }
 
         [HttpGet("{id}")]

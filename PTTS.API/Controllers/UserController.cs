@@ -37,6 +37,8 @@ namespace PTTS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserProfile(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -44,10 +46,10 @@ namespace PTTS.API.Controllers
 
             return Ok(new
             {
-                user.UserName,
-                user.Email,
-                user.FullName,
-                user.DateOfBirth
+            user.UserName,
+            user.Email,
+            user.FullName,
+            user.DateOfBirth
             });
         }
 

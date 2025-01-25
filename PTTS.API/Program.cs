@@ -1,4 +1,8 @@
-using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Models;
 using PTTS.API.Helpers;
 using PTTS.API.Middleware;
@@ -32,7 +36,8 @@ namespace PTTS.API
 
         private static void Configure(WebApplication app)
         {
-            app.UseMiddleware<LoggingMiddleware>();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             if (app.Environment.IsDevelopment())
             {
@@ -46,9 +51,8 @@ namespace PTTS.API
             }
 
             app.MapGet("/", () => "Live!");
-            app.UseAuthentication();
-            app.UseAuthorization();
             app.MapControllers();
+            app.UseMiddleware<LoggingMiddleware>();
         }
     }
 }

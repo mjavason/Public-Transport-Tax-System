@@ -1,6 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.API.Filters.Model;
 using PTTS.Application.Features.ForgotPassword;

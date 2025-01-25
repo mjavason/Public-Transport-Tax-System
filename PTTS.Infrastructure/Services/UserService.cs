@@ -34,10 +34,11 @@ public class UserService : IUserService
 
         // Send confirmation email
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = Uri.EscapeDataString(token); // Ensure the token is URL-encoded
 
         // Send confirmation email
         // var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { userId = user.Id, token }, Request.Scheme);
-        var confirmationLink = $"http://localhost:5085/api/Auth/confirm-email?userId={user.Id}&token={token}";
+        var confirmationLink = $"http://localhost:5085/api/Auth/confirm-email?userId={user.Id}&token={encodedToken}";
         await _emailSender.SendEmailAsync(email, "Confirm your email", $"Click the link to confirm your email: {confirmationLink}");
 
         return Result.Success();

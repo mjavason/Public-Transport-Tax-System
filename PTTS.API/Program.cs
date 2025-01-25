@@ -39,12 +39,14 @@ namespace PTTS.API
                 app.MapScalarApiReference(options =>
                 {
                     options.WithTitle("Public Transport Tax System API");
-                        // .WithTheme(ScalarTheme.BluePlanet);
-                }); app.MapOpenApi();
+                    // .WithTheme(ScalarTheme.BluePlanet);
+                });
+                app.MapOpenApi();
                 app.ApplyMigrations();
             }
 
             app.MapGet("/", () => "Live!");
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
         }

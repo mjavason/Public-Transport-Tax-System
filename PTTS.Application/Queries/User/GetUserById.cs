@@ -23,7 +23,7 @@ namespace PTTS.Application.Queries.User
             var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
             if (user == null) return Result.NotFound<Core.Domain.UserAggregate.User>(["User not found"]);
 
-            return Result.Success<Core.Domain.UserAggregate.User>(user);
+            return Result.Success(user);
         }
     }
 }

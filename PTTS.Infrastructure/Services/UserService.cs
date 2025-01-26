@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.UserAggregate.DTOs;
+using PTTS.Core.Domain.UserAggregate.Enums;
 using PTTS.Core.Domain.UserAggregate.Interfaces;
 using PTTS.Core.Shared;
 using PTTS.Infrastructure.Credentials;
@@ -255,5 +256,23 @@ public class UserService : IUserService
         if (user == null) return Result.NotFound(new List<string> { "User not found" });
 
         return Result.Success(user);
+    }
+
+    public async Task<Result> SeedDb()
+    {
+        string role = UserRole.Admin.ToString();
+        if (!await _roleManager.RoleExistsAsync(role)) await _roleManager.CreateAsync(new IdentityRole(role));
+
+        // Seed an admin user
+        var adminEmail = "testerzero@gmail.com";
+        var adminUser = await _userManager.FindByEmailAsync(adminEmail);
+        if (adminUser == null)
+        {
+            adminUser = User.Create("System", "Admin", adminEmail);
+            await _userManager.CreateAsync(adminUser, "Strong@password123");
+            await _userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+
+        return Result.Success();
     }
 }

@@ -20,5 +20,6 @@ public interface IUserService
     public Task<Result> GetUsersNotInRole(string roleName);
     public Task<Result> GetUserRoles(string userId);
     public Task<Result> GetUserProfile(string userId);
-    public Task<Result> GetUserById(string userId );
+    public Task<Result> GetUserById(string userId);
+    public Task<Result> SeedDb();
 }

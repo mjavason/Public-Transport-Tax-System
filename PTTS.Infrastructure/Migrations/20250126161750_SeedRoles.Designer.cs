@@ -12,7 +12,7 @@ using PTTS.Infrastructure.DatabaseContext;
 namespace PTTS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250126160513_SeedRoles")]
+    [Migration("20250126161750_SeedRoles")]
     partial class SeedRoles
     {
         /// <inheritdoc />
@@ -49,6 +49,20 @@ namespace PTTS.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "6107a220-ed7d-451a-a26a-c8fff0f845eb",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
+                        },
+                        new
+                        {
+                            Id = "c73136f5-9102-4048-b4e4-c6f3756adec8",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

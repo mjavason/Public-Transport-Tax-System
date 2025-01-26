@@ -6,7 +6,7 @@ namespace PTTS.Application.Queries.User
 {
     public class GetUserByIdQuery : IRequest<Result<Core.Domain.UserAggregate.User>>
     {
-        public Guid UserId { get; set; }
+        public required string UserId { get; set; }
     }
 
     public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, Result<Core.Domain.UserAggregate.User>>

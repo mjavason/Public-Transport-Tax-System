@@ -19,7 +19,6 @@ public interface IUserService
     public Task<Result> GetUsersInRole(string roleName);
     public Task<Result> GetUsersNotInRole(string roleName);
     public Task<Result> GetUserRoles(string userId);
-    public Task<Result> UpdateUserProfile(string userId, UpdateUserDto model);
     public Task<Result> GetUserProfile(string userId);
-    public Task<Result> GetUserById(Guid userId );
+    public Task<Result> GetUserById(string userId );
 }

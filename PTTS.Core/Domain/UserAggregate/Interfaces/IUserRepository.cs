@@ -12,7 +12,7 @@ namespace PTTS.Core.Domain.UserAggregate.Interfaces
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The user entity if found; otherwise, null.</returns>
-        Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken);
+        Task<User?> GetByIdAsync(string userId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds a new user to the repository.
@@ -24,16 +24,16 @@ namespace PTTS.Core.Domain.UserAggregate.Interfaces
         /// <summary>
         /// Updates an existing user in the repository.
         /// </summary>
-        /// <param name="user">The user entity to update.</param>
+        /// <param name="user">The user entity with updated values.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        Task UpdateAsync(User user, CancellationToken cancellationToken);
+        void Update(User user, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a user by their unique identifier.
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        Task DeleteAsync(Guid userId, CancellationToken cancellationToken);
+        Task DeleteAsync(string userId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets all users from the repository.

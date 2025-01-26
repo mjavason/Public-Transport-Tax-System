@@ -40,6 +40,8 @@ namespace PTTS.Core.Domain.UserAggregate
                 UpdateFirstName(updateDto.FirstName);
             if (!string.IsNullOrEmpty(updateDto.LastName))
                 UpdateLastName(updateDto.LastName);
+            if (!string.IsNullOrEmpty(updateDto.FullName))
+                UpdateFullName(updateDto.FullName);
             // if (!string.IsNullOrEmpty(updateDto.Email))
             //     UpdateEmail(updateDto.Email);
         }
@@ -52,6 +54,12 @@ namespace PTTS.Core.Domain.UserAggregate
         private void UpdateLastName(string lastName)
         {
             LastName = lastName;
+        }
+
+
+        private void UpdateFullName(string fullName)
+        {
+            FullName = fullName;
         }
 
         private void UpdateEmail(string email)

@@ -14,9 +14,9 @@ namespace PTTS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<User?> GetByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            return await _context.Users.FirstOrDefaultAsync(user => user.Id == userId.ToString(), cancellationToken);
+            return await _context.Users.FirstOrDefaultAsync(user => user.Id == userId, cancellationToken);
         }
 
         public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken)
@@ -30,12 +30,12 @@ namespace PTTS.Infrastructure.Repositories
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public void Update(User user)
+        public void Update(User user, CancellationToken cancellationToken)
         {
             _context.Users.Update(user);
         }
 
-        public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task DeleteAsync(string userId, CancellationToken cancellationToken)
         {
             var user = await GetByIdAsync(userId, cancellationToken);
             if (user != null)
@@ -43,11 +43,6 @@ namespace PTTS.Infrastructure.Repositories
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync(cancellationToken);
             }
-        }
-
-        public Task UpdateAsync(User user, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }

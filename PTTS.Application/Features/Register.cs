@@ -29,7 +29,6 @@ namespace PTTS.Application.Features.User
 
         public async Task<Result> Handle(RegisterUserFeature request, CancellationToken cancellationToken)
         {
-            System.Console.WriteLine($"This are the items inside the handler: {request.Email}, {request.FirstName}");
             return await _userService.Register(request.FirstName, request.LastName, request.Email, request.Password);
         }
     }

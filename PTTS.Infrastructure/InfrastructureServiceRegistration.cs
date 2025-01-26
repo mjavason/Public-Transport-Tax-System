@@ -15,7 +15,6 @@ using PTTS.Infrastructure.Credentials;
 using PTTS.Infrastructure.DatabaseContext;
 using PTTS.Infrastructure.Repositories;
 using PTTS.Infrastructure.Services;
-using ShopAllocationPortal.Infrastructure.Services;
 
 namespace PTTS.Infrastructure
 {

@@ -224,19 +224,6 @@ public class UserService : IUserService
         return Result.Success(roles);
     }
 
-    public async Task<Result> UpdateUserProfile(string userId, UpdateUserDto model)
-    {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return Result.NotFound(new List<string> { "User not found" });
-
-        user.Update(model);
-
-        var result = await _userManager.UpdateAsync(user);
-        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
-
-        return Result.Success();
-    }
-
     public async Task<Result> GetUserProfile(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -253,7 +240,7 @@ public class UserService : IUserService
         return Result.Success(userProfile);
     }
 
-    public async Task<Result> GetUserById(Guid userId)
+    public async Task<Result> GetUserById(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user == null) return Result.NotFound(new List<string> { "User not found" });

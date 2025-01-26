@@ -12,12 +12,8 @@ namespace PTTS.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "identity");
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
-                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -32,11 +28,14 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
-                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     Initials = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: true),
+                    FullName = table.Column<string>(type: "text", nullable: true),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -59,13 +58,14 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "TaxRates",
-                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     VehicleType = table.Column<string>(type: "text", nullable: false),
-                    Rate = table.Column<decimal>(type: "numeric", nullable: false)
+                    Rate = table.Column<decimal>(type: "numeric", nullable: false),
+                    State = table.Column<string>(type: "text", nullable: false),
+                    LocalGovernment = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,7 +74,6 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
-                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -89,7 +88,6 @@ namespace PTTS.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "identity",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -97,7 +95,6 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
-                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -112,7 +109,6 @@ namespace PTTS.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "identity",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -120,7 +116,6 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
-                schema: "identity",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
@@ -134,7 +129,6 @@ namespace PTTS.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "identity",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -142,7 +136,6 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
-                schema: "identity",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -154,14 +147,12 @@ namespace PTTS.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "identity",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "identity",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -169,7 +160,6 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
-                schema: "identity",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -183,7 +173,6 @@ namespace PTTS.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "identity",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -191,14 +180,16 @@ namespace PTTS.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "PublicTransportVehicles",
-                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     VehicleId = table.Column<string>(type: "text", nullable: false),
-                    VehicleType = table.Column<string>(type: "text", nullable: false)
+                    VehicleType = table.Column<string>(type: "text", nullable: false),
+                    Make = table.Column<string>(type: "text", nullable: false),
+                    Model = table.Column<string>(type: "text", nullable: false),
+                    PlateNumber = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,58 +197,50 @@ namespace PTTS.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_PublicTransportVehicles_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "identity",
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
-                schema: "identity",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                schema: "identity",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
-                schema: "identity",
                 table: "AspNetUserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
-                schema: "identity",
                 table: "AspNetUserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
-                schema: "identity",
                 table: "AspNetUserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                schema: "identity",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                schema: "identity",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PublicTransportVehicles_UserId",
-                schema: "identity",
                 table: "PublicTransportVehicles",
                 column: "UserId");
         }
@@ -266,40 +249,31 @@ namespace PTTS.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims",
-                schema: "identity");
+                name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims",
-                schema: "identity");
+                name: "AspNetUserClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins",
-                schema: "identity");
+                name: "AspNetUserLogins");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles",
-                schema: "identity");
+                name: "AspNetUserRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens",
-                schema: "identity");
+                name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "PublicTransportVehicles",
-                schema: "identity");
+                name: "PublicTransportVehicles");
 
             migrationBuilder.DropTable(
-                name: "TaxRates",
-                schema: "identity");
+                name: "TaxRates");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles",
-                schema: "identity");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers",
-                schema: "identity");
+                name: "AspNetUsers");
         }
     }
 }

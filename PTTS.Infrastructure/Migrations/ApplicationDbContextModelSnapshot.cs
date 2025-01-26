@@ -17,7 +17,6 @@ namespace PTTS.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("identity")
                 .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -46,7 +45,7 @@ namespace PTTS.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", "identity");
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -71,7 +70,7 @@ namespace PTTS.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", "identity");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -96,7 +95,7 @@ namespace PTTS.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", "identity");
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -118,7 +117,7 @@ namespace PTTS.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", "identity");
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -133,7 +132,7 @@ namespace PTTS.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", "identity");
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -152,7 +151,7 @@ namespace PTTS.Infrastructure.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", "identity");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("PTTS.Core.Domain.TaxRateAggregate.TaxRate", b =>
@@ -180,7 +179,7 @@ namespace PTTS.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TaxRates", "identity");
+                    b.ToTable("TaxRates");
                 });
 
             modelBuilder.Entity("PTTS.Core.Domain.UserAggregate.User", b =>
@@ -194,12 +193,6 @@ namespace PTTS.Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("DateModified")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("timestamp with time zone");
@@ -268,7 +261,7 @@ namespace PTTS.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", "identity");
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("PTTS.Core.Domain.VehicleAggregate.PublicTransportVehicle", b =>
@@ -307,7 +300,7 @@ namespace PTTS.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PublicTransportVehicles", "identity");
+                    b.ToTable("PublicTransportVehicles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

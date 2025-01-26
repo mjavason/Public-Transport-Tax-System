@@ -68,22 +68,29 @@ public class UserService : IUserService
         if (!result)
             return Result.Unauthorized<AuthResponse?>(["Invalid email or password"]);
 
-        var token = await GenerateJwtToken(user);
+        var (token, userRole) = await GenerateJwtToken(user);
+
         var authResponse = new AuthResponse
         {
             Email = user.Email ?? string.Empty,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Token = token
+            Token = token,
+            Role = userRole
         };
 
         return Result.Success<AuthResponse?>(authResponse);
     }
 
-    private async Task<string> GenerateJwtToken(User user)
+    private async Task<(string, string)> GenerateJwtToken(User user)
     {
         var userClaims = await _userManager.GetClaimsAsync(user);
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var userRole = userRoles.FirstOrDefault();
 
+        var roleClaims = userRoles
+                    .Select(q => new Claim(ClaimTypes.Role, q))
+                    .ToList();
         var claims = new[]
         {
                 new Claim(JwtRegisteredClaimNames.Email,user.Email ?? String.Empty),
@@ -91,7 +98,9 @@ public class UserService : IUserService
                 new Claim("uid", user.Id),
                 new Claim("email", user.Email ?? String.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
- }
+                 new Claim("role", userRoles.FirstOrDefault() ?? "")
+        }
+            .Union(roleClaims)
             .Union(userClaims);
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
@@ -105,7 +114,7 @@ public class UserService : IUserService
           signingCredentials: creds
       );
 
-        return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        return (new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken), userRoles.FirstOrDefault() ?? string.Empty);
     }
 
     public async Task<Result> ForgotPassword(string email)

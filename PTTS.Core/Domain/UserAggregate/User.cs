@@ -5,15 +5,13 @@ using PTTS.Core.Domain.UserAggregate.DTOs;
 
 namespace PTTS.Core.Domain.UserAggregate
 {
-    public class User : IdentityUser, IAuditableEntity
+    public class User : IdentityUser
     {
         public string? Initials { get; set; }
         public string? FullName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public DateTimeOffset DateCreated { get; set; }
-        public DateTimeOffset DateModified { get; set; }
 
         private User(string firstName, string lastName, string email)
         {
@@ -55,7 +53,6 @@ namespace PTTS.Core.Domain.UserAggregate
         {
             LastName = lastName;
         }
-
 
         private void UpdateFullName(string fullName)
         {

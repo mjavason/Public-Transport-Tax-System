@@ -37,6 +37,7 @@ namespace PTTS.Infrastructure
                 dbContextOptions.UseNpgsql(configuration.GetConnectionString("Database"), options =>
                 {
                     options.EnableRetryOnFailure();
+
                 }));
 
             services.AddIdentity<User, IdentityRole>(options =>

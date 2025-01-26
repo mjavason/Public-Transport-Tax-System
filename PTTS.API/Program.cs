@@ -1,9 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.OpenApi.Models;
 using PTTS.API.Helpers;
 using PTTS.API.Middleware;
 using PTTS.Application;

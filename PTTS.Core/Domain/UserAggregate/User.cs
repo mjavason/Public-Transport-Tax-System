@@ -13,14 +13,16 @@ namespace PTTS.Core.Domain.UserAggregate
 
         private User(string firstName, string lastName, string email)
         {
-            // ValidateCreateInputs(firstName, lastName, email);
+            ValidateCreateInputs(firstName, lastName, email);
 
             FirstName = firstName;
             LastName = lastName;
+            FullName = $"{firstName} {lastName}";
+            Initials = $"{firstName[0]}{lastName[0]}";
             Email = email;
+            UserName = email;
             NormalizedUserName = email.ToUpperInvariant();
             NormalizedEmail = email.ToUpperInvariant();
-            UserName = email;
         }
 
         public static User Create(string firstName, string lastName, string email)

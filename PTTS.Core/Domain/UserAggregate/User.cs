@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using PTTS.Core.Domain.Common;
-using PTTS.Core.Domain.Constants;
 using PTTS.Core.Domain.UserAggregate.DTOs;
 
 namespace PTTS.Core.Domain.UserAggregate

@@ -15,7 +15,7 @@ namespace PTTS.Core.Domain.UserAggregate
 
         private User(string firstName, string lastName, string email)
         {
-            ValidateCreateInputs(firstName, lastName, email);
+            // ValidateCreateInputs(firstName, lastName, email);
 
             FirstName = firstName;
             LastName = lastName;

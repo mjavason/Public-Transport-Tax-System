@@ -57,29 +57,26 @@ namespace PTTS.Infrastructure.DatabaseContext
                 }
             );
 
-            // //Seed super admin user
-            // var adminUser = User.Create("System", "Admin", "testerzero@gmail.com");
-            // adminUser.Id = "fd693413-20f6-48ab-8b40-f249c8624ad6";
+            //Seed super admin user
+            var adminUser = User.Create("System", "Admin", "testerzero@gmail.com");
+            adminUser.Id = "fd693413-20f6-48ab-8b40-f249c8624ad6";
+            PasswordHasher<User> passwordHasher = new();
+            // adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Strong@password123");
+            adminUser.PasswordHash = "AQAAAAIAAYagAAAAEJ+W9UqwJmLq5Dd1osxRCTZ/lS1Gpw4i7saurtSiarGGoYwBmDB1/UmacmjRMdATlw==";
+            adminUser.EmailConfirmed = true;
 
-            // builder.Entity<User>(e =>
-            //     {
-            //         PasswordHasher<User> passwordHasher = new();
-            //         adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Strong@password123");
-            //         adminUser.EmailConfirmed = true;
-            //         e.HasData(adminUser);
-            //     }
-            // );
+            builder.Entity<User>().HasData(adminUser);
 
-        //     //Link super admin user to role
-        //     builder.Entity<IdentityUserRole<string>>(e =>
-        //         {
-        //             e.HasData(new IdentityUserRole<string>
-        //             {
-        //                 RoleId = superAdminRole.Id,
-        //                 UserId = adminUser.Id
-        //             });
-        //         }
-        //     );
+            //     //Link super admin user to role
+            //     builder.Entity<IdentityUserRole<string>>(e =>
+            //         {
+            //             e.HasData(new IdentityUserRole<string>
+            //             {
+            //                 RoleId = superAdminRole.Id,
+            //                 UserId = adminUser.Id
+            //             });
+            //         }
+            //     );
         }
     }
 }

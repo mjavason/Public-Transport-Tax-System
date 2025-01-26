@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PTTS.Core.Domain.UserAggregate;
@@ -11,19 +12,21 @@ using PTTS.Core.Domain.UserAggregate.Interfaces;
 using PTTS.Core.Shared;
 using PTTS.Infrastructure.Credentials;
 
-namespace ShopAllocationPortal.Infrastructure.Services;
+namespace PTTS.Infrastructure.Services;
 
 public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly JwtSettings _jwtSettings;
     private readonly IEmailSender _emailSender;
 
-    public UserService(UserManager<User> userManager, IEmailSender emailSender, IOptions<JwtSettings> jwtSettings)
+    public UserService(RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IEmailSender emailSender, IOptions<JwtSettings> jwtSettings)
     {
         _userManager = userManager;
         _jwtSettings = jwtSettings.Value;
         _emailSender = emailSender;
+        _roleManager = roleManager;
     }
 
     public async Task<Result> Register(string firstName, string lastName, string email, string password)
@@ -128,4 +131,133 @@ public class UserService : IUserService
         return Result.Success();
     }
 
+    public async Task<Result> CreateRole(string roleName)
+    {
+        if (string.IsNullOrEmpty(roleName))
+            return Result.BadRequest(["Role name cannot be empty."]);
+
+        var roleExists = await _roleManager.RoleExistsAsync(roleName);
+        if (roleExists)
+            return Result.BadRequest(["Role already exists."]);
+
+        var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
+        if (result.Succeeded)
+            return Result.Success();
+
+        return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
+    }
+
+    public async Task<Result> AddUserToRole(string userId, string roleName)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.NotFound(new List<string> { "User not found" });
+
+        var roleExists = await _roleManager.RoleExistsAsync(roleName);
+        if (!roleExists) return Result.BadRequest(new List<string> { "Role does not exist" });
+
+        var result = await _userManager.AddToRoleAsync(user, roleName);
+        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
+
+        return Result.Success();
+    }
+
+    public async Task<Result> RemoveUserFromRole(string userId, string roleName)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.NotFound(new List<string> { "User not found" });
+
+        var result = await _userManager.RemoveFromRoleAsync(user, roleName);
+        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
+
+        return Result.Success();
+    }
+
+    public async Task<Result> DeleteRole(string roleName)
+    {
+        var role = await _roleManager.FindByNameAsync(roleName);
+        if (role == null) return Result.NotFound(new List<string> { "Role not found" });
+
+        var result = await _roleManager.DeleteAsync(role);
+        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
+
+        return Result.Success();
+    }
+
+    public async Task<Result> UpdateRole(string roleName, string newRoleName)
+    {
+        var role = await _roleManager.FindByNameAsync(roleName);
+        if (role == null) return Result.NotFound(new List<string> { "Role not found" });
+
+        role.Name = newRoleName;
+        var result = await _roleManager.UpdateAsync(role);
+        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
+
+        return Result.Success();
+    }
+
+    public async Task<Result> GetRoles()
+    {
+        var roles = await _roleManager.Roles.ToListAsync();
+        return Result.Success(roles);
+    }
+
+    public async Task<Result> GetUsersInRole(string roleName)
+    {
+        var users = await _userManager.GetUsersInRoleAsync(roleName);
+        return Result.Success(users);
+    }
+
+    public async Task<Result> GetUsersNotInRole(string roleName)
+    {
+        var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+        var allUsers = _userManager.Users.ToList();
+        var usersNotInRole = allUsers.Except(usersInRole).ToList();
+        return Result.Success(usersNotInRole);
+    }
+
+    public async Task<Result> GetUserRoles(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.NotFound(new List<string> { "User not found" });
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return Result.Success(roles);
+    }
+
+    public async Task<Result> UpdateUserProfile(string userId, UpdateUserDto model)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.NotFound(new List<string> { "User not found" });
+
+        user.Update(model);
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded) return Result.BadRequest(result.Errors.Select(e => e.Description).ToList());
+
+        return Result.Success();
+    }
+
+    public async Task<Result> GetUserProfile(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.NotFound(new List<string> { "User not found" });
+
+        var userProfile = new UserProfileDto(
+            user.Id,
+            user.FirstName,
+            user.LastName,
+            user.Email ?? string.Empty,
+            user.PhoneNumber ?? string.Empty
+        );
+
+        return Result.Success(userProfile);
+    }
+
+    public async Task<Result> GetUserById(Guid userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null) return Result.NotFound(new List<string> { "User not found" });
+
+        return Result.Success(user);
+    }
 }

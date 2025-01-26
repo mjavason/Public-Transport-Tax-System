@@ -9,5 +9,17 @@ public interface IUserService
     public Task<Result> Register(string firstName, string lastName, string email, string password);
     public Task<Result> ConfirmEmail(string userId, string token);
     public Task<Result> ForgotPassword(string email);
-    public Task<Result> ResetPassword(string userId, string token, string password);    
+    public Task<Result> ResetPassword(string userId, string token, string password);
+    public Task<Result> CreateRole(string roleName);
+    public Task<Result> AddUserToRole(string userId, string roleName);
+    public Task<Result> RemoveUserFromRole(string userId, string roleName);
+    public Task<Result> DeleteRole(string roleName);
+    public Task<Result> UpdateRole(string roleName, string newRoleName);
+    public Task<Result> GetRoles();
+    public Task<Result> GetUsersInRole(string roleName);
+    public Task<Result> GetUsersNotInRole(string roleName);
+    public Task<Result> GetUserRoles(string userId);
+    public Task<Result> UpdateUserProfile(string userId, UpdateUserDto model);
+    public Task<Result> GetUserProfile(string userId);
+    public Task<Result> GetUserById(Guid userId );
 }

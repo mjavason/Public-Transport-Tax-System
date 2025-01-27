@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.API.Filters.Model;
 using PTTS.Application.Commands.User;
@@ -7,6 +8,7 @@ using PTTS.Application.Queries.User;
 
 namespace PTTS.API.Controllers;
 
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class RoleController : ApiBaseController
@@ -73,7 +75,7 @@ public class RoleController : ApiBaseController
     [EndpointDescription("Deletes the role with the specified ID.")]
     [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteRole(DeleteRoleCommand command)
+    public async Task<IActionResult> DeleteRole([FromRoute] DeleteRoleCommand command)
     {
         var result = await _mediator.Send(command);
         return result.IsSuccess ? NoContent() : GetActionResult(result);

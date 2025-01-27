@@ -255,7 +255,7 @@ public class UserService : IUserService
 
     public async Task<Result> SeedDb()
     {
-        string role = UserRole.Admin.ToString();
+        string role = UserRole.SuperAdmin.ToString();
         if (!await _roleManager.RoleExistsAsync(role)) await _roleManager.CreateAsync(new IdentityRole(role));
 
         // Seed an admin user

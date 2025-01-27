@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.API.Filters.Model;
+using PTTS.Application.Commands.User;
 using PTTS.Application.Features.ForgotPassword;
 using PTTS.Application.Features.Login;
 using PTTS.Application.Features.ResetPassword;
@@ -14,6 +15,13 @@ namespace PTTS.API.Controllers;
 public class AuthController : ApiBaseController
 {
     public AuthController(IMediator mediator) : base(mediator) { }
+
+   [HttpPost("seed")]
+    public async Task<IActionResult> SeedDb([FromBody] SeedDbCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.IsSuccess ? NoContent() : GetActionResult(result);
+    }
 
     [HttpPost("register")]
     [EndpointSummary("Register a new user")]

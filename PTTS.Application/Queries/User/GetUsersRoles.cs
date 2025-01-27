@@ -20,7 +20,8 @@ namespace PTTS.Application.Queries.User
 
         public async Task<Result> Handle(GetUsersRolesQuery request, CancellationToken cancellationToken)
         {
-            return await _userService.GetUserRoles(request.UserId);
+            var roles = await _userService.GetUserRoles(request.UserId);
+            return Result.Success(roles);
         }
     }
 }

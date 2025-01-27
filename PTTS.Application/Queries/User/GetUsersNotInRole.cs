@@ -25,7 +25,8 @@ namespace PTTS.Application.Queries.User
 
         public async Task<Result> Handle(GetUsersNotInRoleQuery request, CancellationToken cancellationToken)
         {
-            return await _userService.GetUsersNotInRole(request.Role);
+            var users = await _userService.GetUsersNotInRole(request.Role);
+            return Result.Success(users);
         }
     }
 }

@@ -205,33 +205,28 @@ public class UserService : IUserService
         return Result.Success();
     }
 
-    public async Task<Result> GetRoles()
+    public async Task<IList<IdentityRole>> GetRoles()
     {
-        var roles = await _roleManager.Roles.ToListAsync();
-        return Result.Success(roles);
+        return await _roleManager.Roles.ToListAsync();
     }
 
-    public async Task<Result> GetUsersInRole(string roleName)
+    public async Task<IList<User>> GetUsersInRole(string roleName)
     {
-        var users = await _userManager.GetUsersInRoleAsync(roleName);
-        return Result.Success(users);
+        return await _userManager.GetUsersInRoleAsync(roleName);
     }
 
-    public async Task<Result> GetUsersNotInRole(string roleName)
+    public async Task<IList<User>> GetUsersNotInRole(string roleName)
     {
         var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
         var allUsers = _userManager.Users.ToList();
-        var usersNotInRole = allUsers.Except(usersInRole).ToList();
-        return Result.Success(usersNotInRole);
+        return allUsers.Except(usersInRole).ToList();
     }
 
-    public async Task<Result> GetUserRoles(string userId)
+    public async Task<IList<string>> GetUserRoles(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return Result.NotFound(new List<string> { "User not found" });
-
-        var roles = await _userManager.GetRolesAsync(user);
-        return Result.Success(roles);
+        if (user is null) return new List<string>();
+        return await _userManager.GetRolesAsync(user);
     }
 
     public async Task<Result> GetUserProfile(string userId)

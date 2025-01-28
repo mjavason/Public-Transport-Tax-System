@@ -10,7 +10,7 @@ namespace PTTS.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class TaxRateController : ApiBaseController
     {
         public TaxRateController(IMediator mediator) : base(mediator) { }

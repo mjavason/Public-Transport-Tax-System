@@ -72,6 +72,7 @@ namespace PTTS.API.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateVehicle([FromBody] UpdateVehicleDto updateVehicleDto)
         {
+            updateVehicleDto.UserId = GetUserId();
             var command = new UpdateVehicleCommand { UpdateVehicleDto = updateVehicleDto };
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : GetActionResult(result);
@@ -84,7 +85,7 @@ namespace PTTS.API.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteVehicle([FromRoute] int id)
         {
-            var command = new DeleteVehicleCommand { Id = id };
+            var command = new DeleteVehicleCommand { Id = id, UserId = GetUserId() };
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : GetActionResult(result);
         }

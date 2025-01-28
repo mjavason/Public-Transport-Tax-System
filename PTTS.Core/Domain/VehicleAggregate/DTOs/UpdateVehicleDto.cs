@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace PTTS.Core.Domain.VehicleAggregate.DTOs;
 
 public class UpdateVehicleDto
@@ -7,4 +9,7 @@ public class UpdateVehicleDto
     public string? Make { get; set; }
     public string? Model { get; set; }
     public string? PlateNumber { get; set; }
+
+    [JsonIgnore]
+    public string? UserId { get; set; }
 }

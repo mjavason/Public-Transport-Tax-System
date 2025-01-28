@@ -29,6 +29,8 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
                 var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.UpdateVehicleDto.VehicleId, cancellationToken);
                 if (vehicle == null)
                     return Result.NotFound(["Vehicle not found"]);
+                if (vehicle.UserId != request.UpdateVehicleDto.UserId)
+                    return Result.Unauthorized(["Unauthorized"]);
 
                 vehicle.Update(request.UpdateVehicleDto);
                 _vehicleRepository.UpdateVehicle(vehicle, cancellationToken);

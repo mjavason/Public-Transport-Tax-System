@@ -8,6 +8,7 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
     public class DeleteVehicleCommand : IRequest<Result>
     {
         public required int Id { get; set; }
+        public required string UserId { get; set; }
     }
 
     public class DeleteVehicleCommandHandler : IRequestHandler<DeleteVehicleCommand, Result>
@@ -23,21 +24,17 @@ namespace PTTS.Application.Commands.PublicTransportVehicle
 
         public async Task<Result> Handle(DeleteVehicleCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.Id, cancellationToken);
-                if (vehicle == null)
-                    return Result.NotFound(new List<string> { "Vehicle not found" });
 
-                _vehicleRepository.DeleteVehicleAsync(vehicle, cancellationToken);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            var vehicle = await _vehicleRepository.GetVehicleByIdAsync(request.Id, cancellationToken);
+            if (vehicle == null)
+                return Result.NotFound(new List<string> { "Vehicle not found" });
+            if (vehicle.UserId != request.UserId)
+                return Result.Unauthorized(new List<string> { "Unauthorized" });
 
-                return Result.Success();
-            }
-            catch (Exception ex)
-            {
-                return Result.BadRequest(new List<string> { ex.Message });
-            }
+            _vehicleRepository.DeleteVehicleAsync(vehicle, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

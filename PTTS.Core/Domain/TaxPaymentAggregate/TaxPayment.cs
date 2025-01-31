@@ -9,18 +9,18 @@ namespace PTTS.Core.Domain.TaxPaymentAggregate
 		public int Id { get; private set; }
 		public decimal Amount { get; private set; }
 		public DateTime PaymentDate { get; private set; }
-		public string PayerName { get; private set; }
-		public string PayerId { get; private set; }
+		public string TaxPayerName { get; private set; }
+		public string TaxPayerId { get; private set; }
 
-		[ForeignKey(nameof(PayerId))]
-		public User? Payer { get; private set; } = null!;
-		private TaxPayment(int id, decimal amount, DateTime paymentDate, string payerName, string payerId)
+		[ForeignKey(nameof(TaxPayerId))]
+		public User? TaxPayer { get; private set; } = null!;
+		private TaxPayment(int id, decimal amount, DateTime paymentDate, string taxPayerName, string taxPayerId)
 		{
 			Id = id;
 			Amount = amount;
 			PaymentDate = paymentDate;
-			PayerName = payerName;
-			PayerId = payerId;
+			TaxPayerName = taxPayerName;
+			TaxPayerId = taxPayerId;
 		}
 
 		public static TaxPayment Create(int id, decimal amount, DateTime paymentDate, string payerName, string payerId)
@@ -36,7 +36,7 @@ namespace PTTS.Core.Domain.TaxPaymentAggregate
 
 		public override string ToString()
 		{
-			return $"TaxPayment [Id={Id}, Amount={Amount}, PaymentDate={PaymentDate}, PayerName={PayerName}, PayerId={PayerId}]";
+			return $"TaxPayment [Id={Id}, Amount={Amount}, PaymentDate={PaymentDate}, PayerName={TaxPayerName}, PayerId={TaxPayerId}]";
 		}
 	}
 }

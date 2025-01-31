@@ -1,12 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.Application.Commands.User;
 using PTTS.Application.Queries.User;
-using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.UserAggregate.DTOs;
-using PTTS.Infrastructure.DatabaseContext;
 
 namespace PTTS.API.Controllers
 {

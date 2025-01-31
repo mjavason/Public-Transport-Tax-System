@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PTTS.API.Filters.Model;
 using PTTS.Application.Commands.TaxPayment;
+using PTTS.Application.Queries.TaxPayment;
 
 namespace PTTS.API.Controllers
 {
@@ -11,16 +12,16 @@ namespace PTTS.API.Controllers
 	{
 		public TaxPaymentController(IMediator mediator) : base(mediator) { }
 
-		// [HttpGet]
-		// [EndpointSummary("Retrieve all tax payments")]
-		// [EndpointDescription("Returns a complete list of all tax payments stored in the system.")]
-		// [ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.TaxPaymentAggregate.TaxPayment>>), StatusCodes.Status200OK)]
-		// [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-		// public async Task<IActionResult> GetAllTaxPayments([FromRoute] GetAllTaxPaymentsQuery query)
-		// {
-		// 	var result = await _mediator.Send(query);
-		// 	return GetActionResult(result, "Payments retrieved successfully");
-		// }
+		[HttpGet]
+		[EndpointSummary("Retrieve all tax payments")]
+		[EndpointDescription("Returns a complete list of all tax payments stored in the system.")]
+		[ProducesResponseType(typeof(SuccessResponse<IReadOnlyList<Core.Domain.TaxPaymentAggregate.TaxPayment>>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+		public async Task<IActionResult> GetAllTaxPayments([FromRoute] GetAllTaxPaymentsQuery query)
+		{
+			var result = await _mediator.Send(query);
+			return GetActionResult(result, "Payments retrieved successfully");
+		}
 
 		// [HttpGet("/filter")]
 		// [EndpointSummary("Filter tax payments")]

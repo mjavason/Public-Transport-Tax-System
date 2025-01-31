@@ -22,6 +22,8 @@ namespace PTTS.API
 		private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 		{
 			services.AddControllers();
+			services.AddRazorPages();
+			services.AddMvc();
 			services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 			services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 			services.AddInfrastructureServices(configuration);
@@ -47,7 +49,7 @@ namespace PTTS.API
 			app.MapGet("/", () => "Live!");
 			app.MapControllers();
 			app.UseMiddleware<LoggingMiddleware>();
-			app.UseMiddleware<ExceptionMiddleware>();
+			// app.UseMiddleware<ExceptionMiddleware>();
 		}
 	}
 }

@@ -21,13 +21,15 @@ public class UserService : IUserService
 	private readonly RoleManager<IdentityRole> _roleManager;
 	private readonly JwtSettings _jwtSettings;
 	private readonly IEmailSender _emailSender;
+	private readonly RazorViewToStringRenderer _razorRenderer;
 
-	public UserService(RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IEmailSender emailSender, IOptions<JwtSettings> jwtSettings)
+	public UserService(RazorViewToStringRenderer razorViewToStringRenderer, RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IEmailSender emailSender, IOptions<JwtSettings> jwtSettings)
 	{
 		_userManager = userManager;
 		_jwtSettings = jwtSettings.Value;
 		_emailSender = emailSender;
 		_roleManager = roleManager;
+		_razorRenderer = razorViewToStringRenderer;
 	}
 
 	public async Task<Result> Register(string firstName, string lastName, string email, string password)
@@ -43,7 +45,11 @@ public class UserService : IUserService
 		// Send confirmation email
 		// var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { userId = user.Id, token }, Request.Scheme);
 		var confirmationLink = $"http://localhost:5085/api/Auth/confirm-email?userId={user.Id}&token={encodedToken}";
-		await _emailSender.SendEmailAsync(email, "Confirm your email", $"Click the link to confirm your email: {confirmationLink}");
+		var mailModel = new ConfirmEmailDTO { ConfirmationLink = confirmationLink, Name = user.FullName };
+		var body = await _razorRenderer.RenderViewToStringAsync("Emails/ConfirmEmail.cshtml", mailModel);
+
+		// await _emailSender.SendEmailAsync(email, "Confirm your email", $"Click the link to confirm your email: {confirmationLink}");
+		await _emailSender.SendEmailAsync(email, "Confirm your email", body);
 
 		return Result.Success();
 	}

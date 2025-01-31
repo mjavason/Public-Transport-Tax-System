@@ -26,6 +26,7 @@ namespace PTTS.Infrastructure
 			services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
 			// Register Repositories
+			services.AddScoped<RazorViewToStringRenderer>();
 			services.AddScoped<ITaxPaymentRepository, TaxPaymentRepository>();
 			services.AddTransient<IEmailSender, EmailSender>();
 			services.AddScoped<IUserService, UserService>();

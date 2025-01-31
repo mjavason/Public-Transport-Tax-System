@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PTTS.Core.Domain.Common;
 using PTTS.Core.Domain.Interfaces;
+using PTTS.Core.Domain.TaxPaymentAggregate.Interfaces;
 using PTTS.Core.Domain.TaxRateAggregate.Interfaces;
 using PTTS.Core.Domain.UserAggregate;
 using PTTS.Core.Domain.UserAggregate.Interfaces;
@@ -25,6 +26,7 @@ namespace PTTS.Infrastructure
 			services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
 			// Register Repositories
+			services.AddScoped<ITaxPaymentRepository, TaxPaymentRepository>();
 			services.AddTransient<IEmailSender, EmailSender>();
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IPublicTransportVehicleRepository, PublicTransportVehicleRepository>();

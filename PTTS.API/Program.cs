@@ -47,6 +47,7 @@ namespace PTTS.API
 			app.MapGet("/", () => "Live!");
 			app.MapControllers();
 			app.UseMiddleware<LoggingMiddleware>();
+			app.UseMiddleware<ExceptionMiddleware>();
 		}
 	}
 }

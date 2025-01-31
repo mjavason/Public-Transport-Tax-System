@@ -35,7 +35,7 @@ namespace PTTS.Application.Commands.TaxRate
 			}
 			catch (Exception ex)
 			{
-				return Result.BadRequest(new List<string> { ex.Message });
+				return Result.BadRequest([ex.Message]);
 			}
 		}
 	}

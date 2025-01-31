@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using PTTS.Core.Domain.Common;
 using PTTS.Core.Domain.UserAggregate;
 
 namespace PTTS.Core.Domain.TaxPaymentAggregate
@@ -11,32 +10,28 @@ namespace PTTS.Core.Domain.TaxPaymentAggregate
 		public DateTime PaymentDate { get; private set; }
 		public string TaxPayerName { get; private set; }
 		public string TaxPayerId { get; private set; }
+		public string LocalGovernment { get; set; }
+		public int VehicleId { get; set; }
 
 		[ForeignKey(nameof(TaxPayerId))]
 		public User? TaxPayer { get; private set; } = null!;
-		private TaxPayment(int id, decimal amount, DateTime paymentDate, string taxPayerName, string taxPayerId)
+		private TaxPayment(string localGovernment, decimal amount, string taxPayerName, string taxPayerId, int vehicleId)
 		{
-			Id = id;
+			LocalGovernment = localGovernment;
 			Amount = amount;
-			PaymentDate = paymentDate;
+			PaymentDate = DateTime.UtcNow;
 			TaxPayerName = taxPayerName;
 			TaxPayerId = taxPayerId;
+			VehicleId = vehicleId;
 		}
 
-		public static TaxPayment Create(int id, decimal amount, DateTime paymentDate, string payerName, string payerId)
+		public static TaxPayment Create(string localGovernment, decimal amount, string payerName, string payerId, int vehicleId)
 		{
-			return new TaxPayment(id, amount, paymentDate, payerName, payerId);
+			return new TaxPayment(localGovernment, amount, payerName, payerId, vehicleId);
 		}
-
-		public void UpdatePayment(decimal amount, DateTime paymentDate)
-		{
-			Amount = amount;
-			PaymentDate = paymentDate;
-		}
-
 		public override string ToString()
 		{
-			return $"TaxPayment [Id={Id}, Amount={Amount}, PaymentDate={PaymentDate}, PayerName={TaxPayerName}, PayerId={TaxPayerId}]";
+			return $"TaxPayment [Id={Id}, Amount={Amount}, PaymentDate={PaymentDate}, PayerName={TaxPayerName}, PayerId={TaxPayerId}, VehicleId={VehicleId}]";
 		}
 	}
 }

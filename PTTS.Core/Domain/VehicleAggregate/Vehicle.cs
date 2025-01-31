@@ -16,7 +16,7 @@ namespace PTTS.Core.Domain.VehicleAggregate
 		public string PlateNumber { get; private set; }
 
 		[ForeignKey(nameof(UserId))]
-		public User? User { get; set; } = null!;
+		public User User { get; set; } = null!;
 
 		private PublicTransportVehicle(string vehicleType, string userId, string make, string model, string plateNumber)
 		{

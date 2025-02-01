@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>18ba50ac-2b69-4e69-b11f-933a214215de</UserSecretsId>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,10 @@
     <ProjectReference Include="..\PTTS.Application\PTTS.Application.csproj" />
     <ProjectReference Include="..\PTTS.Core\PTTS.Core.csproj" />
     <ProjectReference Include="..\PTTS.Infrastructure\PTTS.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Views\**\*.cshtml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

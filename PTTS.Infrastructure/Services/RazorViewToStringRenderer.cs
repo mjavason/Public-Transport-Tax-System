@@ -28,11 +28,17 @@ public class RazorViewToStringRenderer
 		var httpContext = new DefaultHttpContext { RequestServices = _serviceProvider };
 		var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
 
-		var viewResult = _razorViewEngine.FindView(actionContext, viewName, false);
+		// Try to get the view explicitly
+		var viewResult = _razorViewEngine.GetView("~/Views/", viewName, false);
 		if (!viewResult.Success)
 		{
-			throw new InvalidOperationException($"Unable to find view '{viewName}'");
+			viewResult = _razorViewEngine.FindView(actionContext, viewName, false);
+			if (!viewResult.Success)
+			{
+				throw new InvalidOperationException($"Unable to find view '{viewName}'. Make sure the file exists in 'Views/Emails/'.");
+			}
 		}
+
 		var view = viewResult.View;
 		using var sw = new StringWriter();
 		var viewContext = new ViewContext(

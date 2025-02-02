@@ -2,6 +2,7 @@ using MediatR;
 using PTTS.Core.Domain.Common;
 using PTTS.Core.Domain.Constants;
 using PTTS.Core.Domain.Interfaces;
+using PTTS.Core.Domain.TaxPaymentAggregate.DTOs;
 using PTTS.Core.Domain.TaxPaymentAggregate.Interfaces;
 using PTTS.Core.Domain.TaxRateAggregate.DTOs;
 using PTTS.Core.Domain.TaxRateAggregate.Interfaces;
@@ -43,9 +44,13 @@ namespace PTTS.Application.Commands.TaxPayment
 			var taxRate = await _taxRateRepository.FilterTaxRateAsync(filterTaxRateDto, cancellationToken);
 			if (taxRate == null || !taxRate.Any()) return Result.NotFound(["Tax rate unavailable for LGA and Vehicle type"]);
 
-			var newTaxPayment = Core.Domain.TaxPaymentAggregate.TaxPayment.Create(request.LocalGovernment, taxRate[0].Rate, vehicle.User.FullName, vehicle.UserId, vehicle.Id);
+			var filter = new FilterTaxPaymentDto { TaxPayerId = vehicle.UserId, MinimumDate = DateTime.Today.Date };
+			var existingPayment = await _taxPaymentRepository.FilterTaxPaymentAsync(filter, cancellationToken);
+			if (existingPayment != null && existingPayment.Any()) return Result.BadRequest(["A tax payment has already been made for this vehicle today"]);
 
+			var newTaxPayment = Core.Domain.TaxPaymentAggregate.TaxPayment.Create(request.LocalGovernment, taxRate[0].Rate, vehicle.User.FullName, vehicle.UserId, vehicle.Id);
 			_taxPaymentRepository.CreateTaxPayment(newTaxPayment, cancellationToken);
+			
 			await _unitOfWork.SaveChangesAsync(cancellationToken);
 			return Result.Success();
 		}

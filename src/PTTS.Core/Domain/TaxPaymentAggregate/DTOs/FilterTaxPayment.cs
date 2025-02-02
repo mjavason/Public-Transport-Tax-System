@@ -8,5 +8,7 @@ namespace PTTS.Core.Domain.TaxPaymentAggregate.DTOs
 		public string? TaxPayerName { get; set; }
 		public decimal? MinimumAmount { get; set; }
 		public decimal? MaximumAmount { get; set; }
+		public DateTime? MinimumDate { get; set; }
+		public DateTime? MaximumDate { get; set; }
 	}
 }

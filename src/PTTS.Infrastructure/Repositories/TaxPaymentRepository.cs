@@ -29,13 +29,33 @@ namespace PTTS.Infrastructure.Repositories
 		{
 			var query = _context.TaxPayments.AsQueryable();
 
-			if (!string.IsNullOrEmpty(filter.TaxPayerId)) query = query.Where(tp => tp.TaxPayerId == filter.TaxPayerId);
-			if (!string.IsNullOrEmpty(filter.TaxPayerName)) query = query.Where(tp => tp.TaxPayerName == filter.TaxPayerName);
-			if (filter.MinimumAmount.HasValue) query = query.Where(tp => tp.Amount >= filter.MinimumAmount.Value);
-			if (filter.MaximumAmount.HasValue) query = query.Where(tp => tp.Amount <= filter.MaximumAmount.Value);
+			if (!string.IsNullOrEmpty(filter.TaxPayerId))
+				query = query.Where(tp => tp.TaxPayerId == filter.TaxPayerId);
+
+			if (!string.IsNullOrEmpty(filter.TaxPayerName))
+				query = query.Where(tp => tp.TaxPayerName == filter.TaxPayerName);
+
+			if (filter.MinimumAmount.HasValue)
+				query = query.Where(tp => tp.Amount >= filter.MinimumAmount.Value);
+
+			if (filter.MaximumAmount.HasValue)
+				query = query.Where(tp => tp.Amount <= filter.MaximumAmount.Value);
+
+			if (filter.MinimumDate.HasValue)
+			{
+				var minDateUtc = filter.MinimumDate.Value.Date.ToUniversalTime();
+				query = query.Where(tp => tp.PaymentDate >= minDateUtc);
+			}
+
+			if (filter.MaximumDate.HasValue)
+			{
+				var maxDateUtc = filter.MaximumDate.Value.Date.AddDays(1).ToUniversalTime(); // Ensure inclusive upper bound
+				query = query.Where(tp => tp.PaymentDate < maxDateUtc);
+			}
 
 			return await query.ToListAsync(cancellationToken);
 		}
+
 
 		public async Task<IReadOnlyList<TaxPayment>> GetAllTaxPaymentsAsync(CancellationToken cancellationToken)
 		{

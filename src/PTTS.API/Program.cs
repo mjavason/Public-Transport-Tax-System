@@ -1,3 +1,4 @@
+using PTTS.API.Filters;
 using PTTS.API.Helpers;
 using PTTS.API.Middleware;
 using PTTS.Application;
@@ -25,13 +26,28 @@ namespace PTTS.API
 			services.AddRazorPages();
 			services.AddMvc();
 			services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+			services.AddCors(options =>
+			{
+				options.AddPolicy("*", (config) =>
+					config
+						.AllowAnyOrigin()
+						.AllowAnyHeader()
+						.AllowAnyMethod()
+				);
+			});
 			services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 			services.AddInfrastructureServices(configuration);
 			services.AddApplicationServices();
+			services.AddControllers(cfg =>
+			{
+				cfg.Filters.Add<ResultFilter>();
+			});
+
 		}
 
 		private static void Configure(WebApplication app)
 		{
+			app.UseCors("*");
 			app.UseAuthentication();
 			app.UseAuthorization();
 

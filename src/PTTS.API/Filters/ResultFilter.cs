@@ -1,11 +1,10 @@
 using System.Net;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using PTTS.API.Filters.Model;
 using PTTS.Core.Shared;
 
-namespace ShopAllocationPortal.API.Filters;
+namespace PTTS.API.Filters;
 
 public class ResultFilter : ResultFilterAttribute
 {

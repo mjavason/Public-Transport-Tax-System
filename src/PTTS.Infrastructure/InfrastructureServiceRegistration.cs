@@ -25,39 +25,37 @@ namespace PTTS.Infrastructure
 		{
 			services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-			// Register Repositories
+			// Register Repositories & Services
 			services.AddScoped<RazorViewToStringRenderer>();
 			services.AddScoped<ITaxPaymentRepository, TaxPaymentRepository>();
-			services.AddTransient<IEmailSender, EmailSender>();
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IPublicTransportVehicleRepository, PublicTransportVehicleRepository>();
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<ITaxRateRepository, TaxRateRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddTransient<IEmailSender, EmailSender>();
 
-			// Add database context
-			services.AddDbContext<ApplicationDbContext>(dbContextOptions =>
-				dbContextOptions.UseNpgsql(configuration.GetConnectionString("Database"), options =>
-				{
-					options.EnableRetryOnFailure();
+			// Database Context Configuration
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseNpgsql(configuration.GetConnectionString("Database"), npgsqlOptions =>
+					npgsqlOptions.EnableRetryOnFailure()));
 
-				}));
-
+			// Identity Configuration
 			services.AddIdentity<User, IdentityRole>(options =>
-				{
-					options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-					options.User.RequireUniqueEmail = true;
-					options.Password.RequireDigit = false;
-					options.Password.RequiredLength = 6;
-					options.Password.RequireNonAlphanumeric = false;
-					options.Password.RequireUppercase = false;
-					options.Password.RequireLowercase = true;
-				})
-				.AddEntityFrameworkStores<ApplicationDbContext>()
-				.AddDefaultTokenProviders();
+			{
+				options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+				options.User.RequireUniqueEmail = true;
+				options.Password.RequireDigit = false;
+				options.Password.RequiredLength = 6;
+				options.Password.RequireNonAlphanumeric = false;
+				options.Password.RequireUppercase = false;
+				options.Password.RequireLowercase = true;
+			})
+			.AddEntityFrameworkStores<ApplicationDbContext>()
+			.AddDefaultTokenProviders();
 
-			services
-				.AddAuthentication(options =>
+			// JWT Authentication Configuration
+			services.AddAuthentication(options =>
 				{
 					options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 					options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -72,8 +70,8 @@ namespace PTTS.Infrastructure
 						ValidateLifetime = false,
 						ValidIssuer = configuration["JwtSettings:Issuer"],
 						ValidAudience = configuration["JwtSettings:Audience"],
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-							configuration["JwtSettings:Key"] ?? String.Empty))
+						IssuerSigningKey = new SymmetricSecurityKey(
+							Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"] ?? string.Empty))
 					};
 				});
 

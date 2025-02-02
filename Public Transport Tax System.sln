@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.Core", "PTTS.Core\PTTS.Core.csproj", "{2F906516-428D-4EF4-BD0B-EBF09127E2B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.Core", "src\PTTS.Core\PTTS.Core.csproj", "{2F906516-428D-4EF4-BD0B-EBF09127E2B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.Application", "PTTS.Application\PTTS.Application.csproj", "{70389AA2-3AF6-47BC-B3F8-1F36804796F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.Application", "src\PTTS.Application\PTTS.Application.csproj", "{70389AA2-3AF6-47BC-B3F8-1F36804796F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.Infrastructure", "PTTS.Infrastructure\PTTS.Infrastructure.csproj", "{4C6D76A7-352F-4CB2-BD00-06C631935DAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.Infrastructure", "src\PTTS.Infrastructure\PTTS.Infrastructure.csproj", "{4C6D76A7-352F-4CB2-BD00-06C631935DAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.API", "PTTS.API\PTTS.API.csproj", "{862F1F72-5435-49E6-A86F-6A5AA809254E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTTS.API", "src\PTTS.API\PTTS.API.csproj", "{862F1F72-5435-49E6-A86F-6A5AA809254E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

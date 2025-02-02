@@ -55,8 +55,8 @@ namespace PTTS.API
 			{
 				app.MapScalarApiReference(options =>
 				{
-					options.WithTitle("Public Transport Tax System API");
-					// .WithTheme(ScalarTheme.BluePlanet);
+					options.WithTitle("Public Transport Tax System API")
+					.WithTheme(ScalarTheme.Mars);
 				});
 				app.MapOpenApi();
 				app.ApplyMigrations();

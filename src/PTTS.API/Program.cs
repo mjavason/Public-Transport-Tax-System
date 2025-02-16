@@ -12,6 +12,8 @@ namespace PTTS.API
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
+			// SecretChecker.CheckRequiredSecrets(builder.Configuration);
+
 			ConfigureServices(builder.Services, builder.Configuration);
 
 			var app = builder.Build();
